@@ -74,7 +74,7 @@ app.MapAdditionalIdentityEndpoints();
 
 app.Run();
 
-public class EmailSettings
+internal sealed class EmailSettings
 {
     public const string Section = "EmailSettings";
 
@@ -83,7 +83,7 @@ public class EmailSettings
     public SmtpSettings SmtpSettings { get; set; } = null!;
 }
 
-public class SmtpSettings
+internal sealed class SmtpSettings
 {
     public string Host { get; init; } = string.Empty;
     public int Port { get; init; }

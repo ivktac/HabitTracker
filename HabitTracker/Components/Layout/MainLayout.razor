@@ -11,7 +11,10 @@
         </div>
 
         <article class="content px-4">
-            @Body
+            <AuthorizeView>
+                @greetingMessage @context.User.Identity?.Name!
+                @Body
+            </AuthorizeView>
         </article>
     </main>
 </div>
@@ -21,3 +24,31 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    private string greetingMessage = "Вітаю, ";
+
+    protected override Task OnInitializedAsync()
+    {
+        var currentDateTime = DateTime.Now;
+
+        if (currentDateTime.Hour >= 6 && currentDateTime.Hour < 12)
+        {
+            greetingMessage = "Доброго ранку, ";
+        }
+        else if (currentDateTime.Hour >= 12 && currentDateTime.Hour < 17)
+        {
+            greetingMessage = "Доброго дня, ";
+        }
+        else if (currentDateTime.Hour >= 17 && currentDateTime.Hour < 21)
+        {
+            greetingMessage = "Доброго вечора, ";
+        }
+        else
+        {
+            greetingMessage = "Доброї ночі, ";
+        }
+
+        return base.OnInitializedAsync();
+    }
+}
