@@ -20,7 +20,7 @@
                         <form action="Account/Logout" method="post">
                             <AntiforgeryToken />
                             <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                            <button type="submit" class="nav-link">
+                            <button type="submit" class="btn btn-secondary">
                                 <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Вийти
                             </button>
                         </form>
@@ -43,10 +43,12 @@
 
         <article class="content px-4">
             <AuthorizeView>
-                @greetingMessage @context.User.Identity?.Name!
-                
-                @Body
+                <p class="display-3">@greetingMessage @context.User.Identity?.Name!</p>
             </AuthorizeView>
+            
+            <div class="container">
+                @Body
+            </div>
         </article>
     </main>
 </div>
@@ -64,6 +66,8 @@
 
     protected override void OnInitialized()
     {
+        SetGreetingMessage();
+
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
     }
@@ -72,13 +76,6 @@
     {
         currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
         StateHasChanged();
-    }
-
-    protected override Task OnInitializedAsync()
-    {
-        SetGreetingMessage();
-
-        return base.OnInitializedAsync();
     }
 
     private void SetGreetingMessage()
