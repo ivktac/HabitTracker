@@ -4,6 +4,7 @@ using HabitTracker.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +34,18 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+EmailSettings emailSettings = new();
+builder.Configuration.Bind(EmailSettings.Section, emailSettings);
+
+builder.Services
+    .AddFluentEmail(emailSettings.DefaultFromEmail)
+    .AddSmtpSender(new SmtpClient(emailSettings.SmtpSettings.Host)
+    {
+        Port = emailSettings.SmtpSettings.Port
+        // Credentials = new NetworkCredential(emailSettings.SmtpSettings.Username, emailSettings.SmtpSettings.Password)
+    });
+
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, SmtpEmailSender>();
 
 var app = builder.Build();
 
@@ -61,3 +73,20 @@ app.MapRazorComponents<App>()
 app.MapAdditionalIdentityEndpoints();
 
 app.Run();
+
+public class EmailSettings
+{
+    public const string Section = "EmailSettings";
+
+    public string DefaultFromEmail { get; set; } = string.Empty;
+
+    public SmtpSettings SmtpSettings { get; set; } = null!;
+}
+
+public class SmtpSettings
+{
+    public string Host { get; init; } = string.Empty;
+    public int Port { get; init; }
+    public string Username { get; init; } = string.Empty;
+    public string Password { get; init; } = string.Empty;
+}
