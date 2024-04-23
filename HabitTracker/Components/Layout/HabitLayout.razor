@@ -1,0 +1,46 @@
+﻿@using HabitTracker.Components.Account.Shared
+@inherits LayoutComponentBase
+@layout AccountLayout
+
+<div class="container">
+    <AuthorizeView>
+        <p class="display-3">@greetingMessage @context.User.Identity?.Name!</p>
+    </AuthorizeView>
+
+    <div class="row">
+        <div class="col-md-9">
+            @Body
+        </div>
+        <div class="col-md-3">
+        </div>
+    </div>
+</div>
+
+@code {
+    private string greetingMessage = "Вітаю, ";
+
+    protected override void OnInitialized()
+    {
+        SetGreetingMessage();
+
+        base.OnInitialized();
+    }
+
+    private void SetGreetingMessage()
+    {
+        var currentDateTime = DateTime.Now;
+
+        if (currentDateTime.Hour >= 6 && currentDateTime.Hour < 12)
+        {
+            greetingMessage = "Доброго ранку, ";
+        }
+        else if (currentDateTime.Hour >= 12 && currentDateTime.Hour < 17)
+        {
+            greetingMessage = "Доброго дня, ";
+        }
+        else if (currentDateTime.Hour >= 17 && currentDateTime.Hour < 21)
+        {
+            greetingMessage = "Доброго вечора, ";
+        }
+    }
+}

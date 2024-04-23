@@ -42,10 +42,6 @@
         </div>
 
         <article class="content px-4">
-            <AuthorizeView>
-                <p class="display-3">@greetingMessage @context.User.Identity?.Name!</p>
-            </AuthorizeView>
-            
             <div class="container">
                 @Body
             </div>
@@ -60,14 +56,10 @@
 </div>
 
 @code {
-    private string greetingMessage = "Вітаю, ";
-
     private string? currentUrl;
 
     protected override void OnInitialized()
     {
-        SetGreetingMessage();
-
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
     }
@@ -76,24 +68,6 @@
     {
         currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
         StateHasChanged();
-    }
-
-    private void SetGreetingMessage()
-    {
-        var currentDateTime = DateTime.Now;
-
-        if (currentDateTime.Hour >= 6 && currentDateTime.Hour < 12)
-        {
-            greetingMessage = "Доброго ранку, ";
-        }
-        else if (currentDateTime.Hour >= 12 && currentDateTime.Hour < 17)
-        {
-            greetingMessage = "Доброго дня, ";
-        }
-        else if (currentDateTime.Hour >= 17 && currentDateTime.Hour < 21)
-        {
-            greetingMessage = "Доброго вечора, ";
-        }
     }
 
     public void Dispose()

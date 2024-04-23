@@ -10,9 +10,9 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Log in</PageTitle>
+<PageTitle>Вхід</PageTitle>
 
-<h1>Log in</h1>
+<h1>Вхід у систему</h1>
 <div class="row">
     <section>
         <StatusMessage Message="@errorMessage" />
@@ -99,14 +99,14 @@
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            errorMessage = "Помилка: невірна пошта або пароль.";
         }
     }
 
     private sealed class InputModel
     {
         [Required]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Пошта має бути дійсною.")]
         public string Email { get; set; } = "";
 
         [Required]

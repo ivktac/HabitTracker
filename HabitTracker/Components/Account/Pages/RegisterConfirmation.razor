@@ -42,7 +42,7 @@
         if (user is null)
         {
             HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            statusMessage = "Error finding user for unspecified email";
+            statusMessage = "Помилка підтвердження реєстрації. Користувач не знайдений.";
         }
     }
 }
