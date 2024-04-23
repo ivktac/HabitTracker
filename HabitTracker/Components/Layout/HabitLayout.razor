@@ -2,19 +2,12 @@
 @inherits LayoutComponentBase
 @layout AccountLayout
 
-<div class="container">
-    <AuthorizeView>
-        <p class="display-3">@greetingMessage @context.User.Identity?.Name!</p>
-    </AuthorizeView>
 
-    <div class="row">
-        <div class="col-md-9">
-            @Body
-        </div>
-        <div class="col-md-3">
-        </div>
-    </div>
-</div>
+<AuthorizeView>
+    <p class="display-5">@greetingMessage @context.User.Identity?.Name!</p>
+
+    @Body
+</AuthorizeView>
 
 @code {
     private string greetingMessage = "Вітаю, ";

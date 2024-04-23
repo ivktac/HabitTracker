@@ -1,6 +1,8 @@
 using HabitTracker.Components;
 using HabitTracker.Components.Account;
 using HabitTracker.Data;
+using HabitTracker.Interfaces;
+using HabitTracker.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +19,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -27,7 +30,9 @@ builder.Services.AddAuthentication(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -46,6 +51,9 @@ builder.Services
     });
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, SmtpEmailSender>();
+
+builder.Services.AddScoped<IHabit, HabitService>();
+builder.Services.AddScoped<IColor, ColorService>();
 
 var app = builder.Build();
 

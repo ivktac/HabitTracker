@@ -1,0 +1,142 @@
+﻿@page "/Habits/Add"
+@rendermode InteractiveServer
+
+@using HabitTracker.Components.Account.Shared
+@using HabitTracker.Components.Layout
+
+@using System.ComponentModel.DataAnnotations
+@using HabitTracker.Components.Account
+@using HabitTracker.Data
+@using Microsoft.AspNetCore.Identity
+
+
+@inject IHabit HabitService
+@inject IColor ColorService
+@inject NavigationManager Navigation
+@inject ILogger<AddHabit> Logger
+@inject NavigationManager NavigationManager
+
+<PageTitle>Додати нову звичку</PageTitle>
+
+
+@if (Colors is null)
+{
+    <p>Завантаження...</p>
+}
+else
+{
+    <div class="d-flex container w-50 flex-column align-items-center justify-content-center">
+        <h3 class="mx-5 px-5">Додати нову звичку</h3>
+
+        <EditForm Model="@Input" FormName="newHabit" OnValidSubmit="OnValidSubmitAsync" class="m-5 justify-content-center">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+
+            <div class="row container">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Назва звички:</label>
+                    <InputText id="title" class="form-control" @bind-Value="Input.Title" />
+                    <ValidationMessage For="@(() => Input.Title)" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Опис звички:</label>
+                    <InputText id="description" class="form-control" @bind-Value="Input.Description" />
+                    <ValidationMessage For="@(() => Input.Description)" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="color" class="form-label">Колір:</label>
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                        <div class="m-2" style="color: @(GetColorHexCode()); font-family: 'FontSupportingBrahmi'">&#11044;</div>
+                        <select id="color" class="form-select" @bind="Input.ColorId">
+                            <option value="0">Оберіть колір</option>
+                            @foreach (var color in Colors)
+                            {
+                                <option value="@color.Id">@color.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <ValidationMessage For="@(() => Input.ColorId)" />
+                </div>
+
+                @* <div class="mb-3">
+                    <label for="frequencies" class="form-label">Дні тижня:</label>
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                        @foreach (var day in Enum.GetValues<DayOfWeek>())
+                        {
+                            <input type="checkbox" class="btn-check" id="@day" name="frequency" autocomplete="off" value="@day" />
+                            <label class="btn btn-outline m-1" for="@day">
+                                @ukrainian.DateTimeFormat.GetShortestDayName(day)
+                            </label>
+                        }
+                    </div>
+                </div> *@
+                <button type="submit" class="container w-100 btn btn-primary w-25 btn-lg">Додати</button>
+            </div>
+
+        </EditForm>
+    </div>
+}
+
+
+@code {
+    private List<Color>? Colors { get; set; }
+    CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Colors = await ColorService.GetColorsAsync();
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        if (Input.ColorId == Guid.Empty)
+        {
+            return;
+        }
+
+        try
+        {
+
+            var habit = new Habit
+            {
+                Title = Input.Title,
+                Description = Input.Description,
+                ColorId = Input.ColorId,
+                StartDate = DateTime.Now,
+                IsCompleted = false,
+            };
+
+            await HabitService.CreateHabitAsync(habit);
+            Logger.LogInformation("User added a new habit successfully.");
+            NavigationManager.NavigateTo("/Habits");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError("Error occured: ", ex.ToString());
+        }
+
+    }
+
+    private async Task<string> GetColorHexCode()
+    {
+        var color = await ColorService.GetColorByIdAsync(Input.ColorId);
+
+        return color.Code;
+    }
+
+
+    private sealed class InputModel
+    {
+        [Required]
+        public string Title { get; set; } = string.Empty;
+        
+        public string Description { get; set; } = string.Empty;
+        [Required]
+        public Guid ColorId { get; set; }
+    }
+}

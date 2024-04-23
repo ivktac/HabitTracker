@@ -4,6 +4,7 @@ using HabitTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HabitTracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240423172214_AddHabitModel")]
+    partial class AddHabitModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,9 +43,6 @@ namespace HabitTracker.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -107,68 +107,6 @@ namespace HabitTracker.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Colors", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("3992a67f-c7ce-45fc-a91d-717cad7c82e8"),
-                            Code = "#FF0000",
-                            Name = "Red"
-                        },
-                        new
-                        {
-                            Id = new Guid("b44e995e-240c-4d5a-8a59-2eb947ea385f"),
-                            Code = "#00FF00",
-                            Name = "Green"
-                        },
-                        new
-                        {
-                            Id = new Guid("f73c6950-f1fe-47ee-b139-45d1ae3b676d"),
-                            Code = "#0000FF",
-                            Name = "Blue"
-                        },
-                        new
-                        {
-                            Id = new Guid("deab0779-d29f-42c8-a4c2-8e9266846470"),
-                            Code = "#FFFF00",
-                            Name = "Yellow"
-                        },
-                        new
-                        {
-                            Id = new Guid("8c181580-e600-41c4-b8f4-65b697ff594f"),
-                            Code = "#800080",
-                            Name = "Purple"
-                        },
-                        new
-                        {
-                            Id = new Guid("5420ca31-b752-414e-80c1-9a93aa375e60"),
-                            Code = "#FFA500",
-                            Name = "Orange"
-                        },
-                        new
-                        {
-                            Id = new Guid("2043d9a6-3676-4765-b762-94f2f03469dd"),
-                            Code = "#FFC0CB",
-                            Name = "Pink"
-                        },
-                        new
-                        {
-                            Id = new Guid("d6766d7a-cc62-4cd9-bb83-694f967c79b1"),
-                            Code = "#A52A2A",
-                            Name = "Brown"
-                        },
-                        new
-                        {
-                            Id = new Guid("f462b977-aa97-4dec-aceb-bb54dd3c0222"),
-                            Code = "#000000",
-                            Name = "Black"
-                        },
-                        new
-                        {
-                            Id = new Guid("08013ae3-4441-4617-973f-5e175a57488f"),
-                            Code = "#FFFFFF",
-                            Name = "White"
-                        });
                 });
 
             modelBuilder.Entity("HabitTracker.Data.Entities.Habit", b =>
