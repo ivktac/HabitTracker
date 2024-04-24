@@ -51,13 +51,18 @@ else
 
                 <div class="mb-3">
                     <label for="color" class="form-label">Колір:</label>
-                    <InputSelect id="color" @bind-Value="Input.ColorId" class="form-select">
+                    <div class="d-flex m-2 justify-content-between align-items-center">
+                        <span style="color: '@Input.ColorHexCode';">&#11044;</span>
+                        <InputSelect id="color" @bind-Value="Input.ColorId" class="form-select">
                             <option value="">Оберіть колір</option>
                             @foreach (var color in Colors)
                             {
-                                <option value="@color.Id.ToString()">@color.Name</option>
+                                <option value="@color.Id.ToString()" @onselect="_ => ChangeColor()">
+                                    @color.Name
+                                </option>
                             }
                         </InputSelect>
+                    </div>
                     <ValidationMessage For="@(() => Input.ColorId)" />
                 </div>
 
@@ -128,10 +133,29 @@ else
         }
     }
 
+    private async Task ChangeColor()
+    {
+        if (Input is null)
+        {
+            return;
+        }
+
+        var color = Colors!.FirstOrDefault(c => c.Id.ToString() == Input.ColorId);
+
+        Logger.LogInformation("User selected a color: {Color}", color?.Name);
+
+        if (color is not null)
+        {
+            Input.ColorHexCode = color.Code;
+        }
+    }
+
     private async Task OnValidSubmitAsync()
     {
         try
         {
+            var sortedDays = Input.SelectedDays.OrderBy(d => (int)d).ToList();
+
             if (Id is null)
             {
                 var habit = new Habit
@@ -142,7 +166,7 @@ else
                     StartDate = DateTime.Now,
                     IsCompleted = false,
                 };
-                await HabitService.CreateHabitAsync(habit, Input.SelectedDays);
+                await HabitService.CreateHabitAsync(habit, sortedDays);
                 Logger.LogInformation("User added a new habit successfully.");
             }
             else
@@ -152,7 +176,7 @@ else
                 habit.Description = Input.Description;
                 habit.ColorId = Guid.Parse(Input.ColorId!);
 
-                await HabitService.UpdateHabitAsync(habit, Input.SelectedDays);
+                await HabitService.UpdateHabitAsync(habit, sortedDays);
                 Logger.LogInformation("User updated a habit successfully.");
             }
 
@@ -162,20 +186,6 @@ else
         {
             Logger.LogError("Error occured: ", ex.ToString());
         }
-    }
-
-    private async Task GetColorHexCode(string colorId)
-    {
-        if (string.IsNullOrEmpty(colorId))
-        {
-            return;
-        }
-
-        var id = Guid.Parse(colorId);
-
-        var color = await ColorService.GetColorByIdAsync(id);
-
-        Logger.LogInformation($"Color hex code: {color.Code}");
     }
 
     private sealed class InputModel
@@ -188,6 +198,16 @@ else
         [Required(ErrorMessage = "Поле колір є обов'язковим")]
         public string? ColorId { get; set; }
 
-        public List<DayOfWeek> SelectedDays { get; set; } = [];
+        public string? ColorHexCode { get; set; }
+
+        public List<DayOfWeek> SelectedDays { get; set; } = [
+            DayOfWeek.Monday,
+            DayOfWeek.Tuesday,
+            DayOfWeek.Wednesday,
+            DayOfWeek.Thursday,
+            DayOfWeek.Friday,
+            DayOfWeek.Saturday,
+            DayOfWeek.Sunday
+        ];
     }
 }
