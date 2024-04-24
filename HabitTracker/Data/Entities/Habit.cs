@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace HabitTracker.Data.Entities;
 
@@ -23,6 +24,8 @@ public class Habit
 
     public string UserId { get; set; } = string.Empty;
     public ApplicationUser User { get; set; } = null!;
+
+    [JsonIgnore]
 
     public List<HabitFrequency> Frequencies { get; set; } = [];
 

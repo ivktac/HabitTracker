@@ -21,11 +21,12 @@
             <i class="bi bi-x-lg" /> Delete
         </button>
     </div>
+    <DeleteHabit Habit="@Habit" />
 </li>
 
 @code {
     [Parameter]
-    public Habit Habit { get; set; }
+    public required Habit Habit { get; set; }
 
 
     private static string GetUrl(Guid id) => $"/Habits/Edit/{id}";

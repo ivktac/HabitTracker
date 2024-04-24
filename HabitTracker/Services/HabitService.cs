@@ -55,8 +55,9 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         await context.SaveChangesAsync();
     }
 
-    public async Task DeleteHabitAsync(Habit habit)
+    public async Task DeleteHabitAsync(Guid id)
     {
+        var habit = await context.Habits.FindAsync(id) ?? throw new Exception("Habit not found");
         var userId = await GetUserIdAsync();
 
         if (string.IsNullOrEmpty(userId))
@@ -75,8 +76,6 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
             context.Habits.Remove(entry);
             await context.SaveChangesAsync();
         }
-
-        throw new Exception("Habit not found");
     }
 
     public async Task<Habit> GetHabitByIdAsync(Guid id)

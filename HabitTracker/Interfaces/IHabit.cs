@@ -8,7 +8,7 @@ public interface IHabit
 
     Task<Habit> GetHabitByIdAsync(Guid id);
 
-    Task DeleteHabitAsync(Habit habit);
+    Task DeleteHabitAsync(Guid id);
 
     Task UpdateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks);
 

@@ -48,17 +48,16 @@ else
                     <ValidationMessage For="@(() => Input.Description)" />
                 </div>
 
+
                 <div class="mb-3">
                     <label for="color" class="form-label">Колір:</label>
-                    <div class="d-flex justify-content-between align-items-center mt-1">
-                        <select id="color" class="form-select" @bind="Input.ColorId">
-                            <option value="0">Оберіть колір</option>
+                    <InputSelect id="color" @bind-Value="Input.ColorId" class="form-select">
+                            <option value="">Оберіть колір</option>
                             @foreach (var color in Colors)
                             {
-                                <option value="@color.Id">@color.Name</option>
+                                <option value="@color.Id.ToString()">@color.Name</option>
                             }
-                        </select>
-                    </div>
+                        </InputSelect>
                     <ValidationMessage For="@(() => Input.ColorId)" />
                 </div>
 
@@ -68,7 +67,16 @@ else
                     </ItemTemplate>
                 </SelectList>
 
-                <button type="submit" class="container w-100 btn btn-primary w-25 btn-lg">Додати</button>
+                <button type="submit" class="container w-100 btn btn-primary w-25 btn-lg">
+                    @if (Id is null)
+                    {
+                        <span>Додати</span>
+                    }
+                    else
+                    {
+                        <span>Оновити</span>
+                    }
+                </button>
             </div>
 
         </EditForm>
@@ -107,7 +115,7 @@ else
             {
                 Title = habit.Title,
                 Description = habit.Description,
-                ColorId = habit.ColorId,
+                ColorId = habit.ColorId.ToString(),
                 SelectedDays = habit.Frequencies.Select(f => f.DayOfWeek).ToList()
             };
 
@@ -122,11 +130,6 @@ else
 
     private async Task OnValidSubmitAsync()
     {
-        if (Input?.ColorId == Guid.Empty)
-        {
-            return;
-        }
-
         try
         {
             if (Id is null)
@@ -135,7 +138,7 @@ else
                 {
                     Title = Input!.Title,
                     Description = Input.Description,
-                    ColorId = Input.ColorId,
+                    ColorId = Guid.Parse(Input.ColorId!),
                     StartDate = DateTime.Now,
                     IsCompleted = false,
                 };
@@ -147,7 +150,7 @@ else
                 var habit = await HabitService.GetHabitByIdAsync(Id!.Value);
                 habit.Title = Input!.Title;
                 habit.Description = Input.Description;
-                habit.ColorId = Input.ColorId;
+                habit.ColorId = Guid.Parse(Input.ColorId!);
 
                 await HabitService.UpdateHabitAsync(habit, Input.SelectedDays);
                 Logger.LogInformation("User updated a habit successfully.");
@@ -161,21 +164,29 @@ else
         }
     }
 
-    private async Task GetColorHexCode(Guid colorId)
+    private async Task GetColorHexCode(string colorId)
     {
-        var color = await ColorService.GetColorByIdAsync(colorId);
+        if (string.IsNullOrEmpty(colorId))
+        {
+            return;
+        }
+
+        var id = Guid.Parse(colorId);
+
+        var color = await ColorService.GetColorByIdAsync(id);
 
         Logger.LogInformation($"Color hex code: {color.Code}");
     }
 
     private sealed class InputModel
     {
-        [Required]
+        [Required(ErrorMessage="Назва звичка є обов'язковим")]
         public string Title { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
-        [Required]
-        public Guid ColorId { get; set; }
+
+        [Required(ErrorMessage = "Поле колір є обов'язковим")]
+        public string? ColorId { get; set; }
 
         public List<DayOfWeek> SelectedDays { get; set; } = [];
     }

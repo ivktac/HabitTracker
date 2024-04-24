@@ -1,0 +1,44 @@
+﻿@inject IHabit HabitService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="modal fade" id="@GetModalId(Habit)" tabindex="-1" aria-labelledby="exampleModelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModelLabel">@title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="@ConfirmAsync">
+                    Видалити
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Habit? Habit { get; set; }
+
+    private string title { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        title = $"Видалити звичку {Habit?.Title}?";        
+    }
+
+    public static string GetModalId(Habit? habit)
+    {
+        ArgumentNullException.ThrowIfNull(habit);
+        return $"deleteModal-{habit.Id}";
+    }
+
+    private async Task ConfirmAsync()
+    {
+        await HabitService.DeleteHabitAsync(Habit!.Id);
+        NavigationManager.Refresh();
+    }
+}
