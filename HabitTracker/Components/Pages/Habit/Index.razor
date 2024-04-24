@@ -6,15 +6,13 @@
 <div class="d-flex flex-column align-items-center justify-content-center">
     <h3 class="mx-5 px-5">Мої звички</h3>
 
-    <a href="/Habits/Add" class="btn btn-outline-primary m-5 btn-lg">Додати нову звичку</a>
-
     @if (Habits.Count == 0)
     {
-        <em class="h5 mt-5">У вас ще немає жодної звички</em>
+        <em class="h5 mt-5" style="color: #6c757d;">У вас ще немає жодної звички</em>
     }
     else
     {
-        <div class="container mt-4 w-50 d-flex justify-content-center">
+        <div class="container mt-4 w-50 d-flex justify-content-center" style="max-width: 700px; min-width: 300px;">
             <ul class="list-group w-100">
                 @foreach (var habit in Habits)
                 {
@@ -23,6 +21,8 @@
             </ul>
         </div>
     }
+
+    <a href="/Habits/Add" class="btn btn-outline-primary m-5 btn-lg">Додати нову звичку</a>
 </div>
 
 @code {

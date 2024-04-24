@@ -19,7 +19,7 @@
 @inject ILogger<AddHabit> Logger
 @inject NavigationManager NavigationManager
 
-<PageTitle>Додати нову звичку</PageTitle>
+<PageTitle>@title</PageTitle>
 
 
 @if (Colors is null || Input is null)
@@ -28,14 +28,14 @@
 }
 else
 {
-    <div class="d-flex container w-50 flex-column align-items-center justify-content-center">
-        <h3 class="mx-5 px-5">Додати нову звичку</h3>
+    <div class="d-flex flex-column align-items-center justify-content-center">
+        <h3 class="mx-5 px-5">@title</h3>
 
         <EditForm Model="@Input" FormName="newHabit" OnValidSubmit="OnValidSubmitAsync" class="m-5 justify-content-center">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
 
-            <div class="row container">
+            <div class="row d-flex justify-content-center">
                 <div class="mb-3">
                     <label for="title" class="form-label">Назва звички:</label>
                     <InputText id="title" class="form-control" @bind-Value="Input.Title" />
@@ -52,12 +52,11 @@ else
                 <div class="mb-3">
                     <label for="color" class="form-label">Колір:</label>
                     <div class="d-flex m-2 justify-content-between align-items-center">
-                        <span style="color: '@Input.ColorHexCode';">&#11044;</span>
                         <InputSelect id="color" @bind-Value="Input.ColorId" class="form-select">
                             <option value="">Оберіть колір</option>
                             @foreach (var color in Colors)
                             {
-                                <option value="@color.Id.ToString()" @onselect="_ => ChangeColor()">
+                                <option style="color: @color.Code" value="@color.Id.ToString()">
                                     @color.Name
                                 </option>
                             }
@@ -71,8 +70,10 @@ else
                         @ukrainian.DateTimeFormat.GetShortestDayName(day)
                     </ItemTemplate>
                 </SelectList>
+            </div>
 
-                <button type="submit" class="container w-100 btn btn-primary w-25 btn-lg">
+            <div class="d-flex justify-content-center w-100 my-4">
+                <button type="submit" class="btn btn-outline-primary w-25 btn-lg">
                     @if (Id is null)
                     {
                         <span>Додати</span>
@@ -133,23 +134,6 @@ else
         }
     }
 
-    private async Task ChangeColor()
-    {
-        if (Input is null)
-        {
-            return;
-        }
-
-        var color = Colors!.FirstOrDefault(c => c.Id.ToString() == Input.ColorId);
-
-        Logger.LogInformation("User selected a color: {Color}", color?.Name);
-
-        if (color is not null)
-        {
-            Input.ColorHexCode = color.Code;
-        }
-    }
-
     private async Task OnValidSubmitAsync()
     {
         try
@@ -197,8 +181,6 @@ else
 
         [Required(ErrorMessage = "Поле колір є обов'язковим")]
         public string? ColorId { get; set; }
-
-        public string? ColorHexCode { get; set; }
 
         public List<DayOfWeek> SelectedDays { get; set; } = [
             DayOfWeek.Monday,

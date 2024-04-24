@@ -8,7 +8,7 @@
             <input type="checkbox" 
                 checked="@SelectedItems.Contains(item)"
                 class="btn-check" id="@id" autocomplete="off" @onchange="_ => OnChange(item)" />
-            <label class="btn btn-outline-secondary" for="@id">
+            <label class="btn btn-outline-secondary m-1" for="@id">
                 @ItemTemplate(item)
             </label>
         </div>
