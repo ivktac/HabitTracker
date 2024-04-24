@@ -24,7 +24,7 @@
                 <WeekCalendar Habits="@Habits" />
             </div>
             <div class="col-md-4">
-                @* <TodayHabits /> *@
+                <TodayHabits Habits="@TodayHabits" />
             </div>
         </div>
     </div>
@@ -42,6 +42,8 @@
     private DateTime CurrentDate => DateTime.Now;
 
     private List<Habit> Habits { get; set; } = [];
+
+    private List<Habit> TodayHabits => Habits.Where(h => h.Frequencies.Any(f => f.DayOfWeek == CurrentDate.DayOfWeek)).ToList();
 
     protected async override Task OnInitializedAsync()
     {

@@ -4,34 +4,37 @@
 }
 else
 {
-        <table class="table my-4">
-            <thead>
-                <tr>
-                    <th></th>
+    <table class="table my-4">
+        <thead>
+            <tr>
+                <th></th>
+                @foreach (var day in DaysOfWeek)
+                {
+                    <th>@ukrainian.DateTimeFormat.GetShortestDayName(day)</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var habit in Habits)
+            {
+                <tr style="line-height: 2rem">
+                    <th scope="row">@habit.Title</th>
                     @foreach (var day in DaysOfWeek)
                     {
-                        <th>@ukrainian.DateTimeFormat.GetShortestDayName(day)</th>
+                        <td>
+                            @if (habit.Frequencies.Any(f => f.DayOfWeek == day))
+                            {
+                                <input type="checkbox" checked="@GetChecked(habit, day)" disabled
+                                        class="form-check-input mt-0"
+                                       style="height: 1.6rem; width: 1.6rem; background-color: @habit.HexCode; border-color: @habit.HexCode;"
+                                        id="@habit.Id" />
+                            }
+                        </td>
                     }
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var habit in Habits)
-                {
-                    <tr style="line-height: 2rem">
-                        <th scope="row">@habit.Title</th>
-                        @foreach (var day in DaysOfWeek)
-                        {
-                            <td>
-                            <input type="checkbox" checked="@GetChecked(habit, day)" disabled
-                                   class="form-check-input mt-0"
-                                style="height: 1.6rem; width: 1.6rem;"
-                                id="@habit.Id" />
-                            </td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
