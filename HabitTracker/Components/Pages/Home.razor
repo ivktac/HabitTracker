@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using HabitTracker.Components.Account.Shared
-@using HabitTracker.Components.Pages.Habit.Shared
+@using HabitTracker.Components.Shared
 
 @rendermode InteractiveServer
 
@@ -9,7 +9,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <HabitTable />
+        <Tracker />
     </Authorized>
     <NotAuthorized>
         <div class="full-screen-image-container">

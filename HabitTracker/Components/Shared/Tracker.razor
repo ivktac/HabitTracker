@@ -1,0 +1,33 @@
+﻿@inject IHabit HabitService
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table my-4">
+                <thead>
+                    <tr>
+                        @foreach (var day in DaysOfWeek)
+                        {
+                            <th>@ukrainian.DateTimeFormat.GetShortestDayName(day)</th>
+                        }
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="col-md-4">
+            @* <TodayHabits /> *@
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Habit> Habits { get; set; } = [];
+
+
+    protected async override Task OnInitializedAsync() => Habits = await HabitService.GetHabitsAsync();
+
+    private CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
+
+    private List<DayOfWeek> DaysOfWeek = Enum.GetValues<DayOfWeek>().ToList();
+}
