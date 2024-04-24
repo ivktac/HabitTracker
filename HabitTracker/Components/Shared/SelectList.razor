@@ -1,0 +1,41 @@
+﻿@typeparam TItem
+
+<div class="btn-group" role="group" aria-label="Days of week">
+    @foreach (var item in Items)
+    {
+        var id = Guid.NewGuid();
+        <div class="m-2">
+            <input type="checkbox" class="btn-check" id="@id" autocomplete="off" @onchange="_ => OnChange(item)" />
+            <label class="btn btn-outline-secondary" for="@id">
+                @ItemTemplate(item)
+            </label>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<TItem> Items { get; set; } = [];
+
+    [Parameter]
+    public RenderFragment<TItem> ItemTemplate { get; set; } = default!;
+
+    [Parameter]
+    public List<TItem> SelectedItems { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<List<TItem>> SelectedItemsChanged { get; set; }
+
+    private void OnChange(TItem item)
+    {
+        if (SelectedItems.Contains(item))
+        {
+            SelectedItems.Remove(item);
+        }
+        else
+        {
+            SelectedItems.Add(item);
+        }
+        SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+}

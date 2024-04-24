@@ -26,7 +26,7 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         return userId;
     }
 
-    public async Task CreateHabitAsync(Habit habit)
+    public async Task CreateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks)
     {
         var userId = await GetUserIdAsync();
 
@@ -38,6 +38,20 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         habit.UserId = userId;
 
         await context.Habits.AddAsync(habit);
+        if (dayOfWeeks is not null)
+        {
+            foreach (var dayOfWeek in dayOfWeeks)
+            {
+                var frequency = new HabitFrequency
+                {
+                    DayOfWeek = dayOfWeek,
+                    HabitId = habit.Id
+                };
+
+                await context.Frequencies.AddAsync(frequency);
+            }
+        }
+
         await context.SaveChangesAsync();
     }
 

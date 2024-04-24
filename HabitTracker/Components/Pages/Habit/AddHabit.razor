@@ -6,6 +6,7 @@
 
 @using System.ComponentModel.DataAnnotations
 @using HabitTracker.Components.Account
+@using HabitTracker.Components.Shared
 @using HabitTracker.Data
 @using Microsoft.AspNetCore.Identity
 
@@ -60,18 +61,12 @@ else
                     <ValidationMessage For="@(() => Input.ColorId)" />
                 </div>
 
-                @* <div class="mb-3">
-                    <label for="frequencies" class="form-label">Дні тижня:</label>
-                    <div class="d-flex justify-content-between align-items-center mt-1">
-                        @foreach (var day in Enum.GetValues<DayOfWeek>())
-                        {
-                            <input type="checkbox" class="btn-check" id="@day" name="frequency" autocomplete="off" value="@day" />
-                            <label class="btn btn-outline m-1" for="@day">
-                                @ukrainian.DateTimeFormat.GetShortestDayName(day)
-                            </label>
-                        }
-                    </div>
-                </div> *@
+                <SelectList Items="Enum.GetValues<DayOfWeek>().ToList()" @bind-SelectedItems="Input.SelectedDays" Context="day">
+                    <ItemTemplate>
+                        @ukrainian.DateTimeFormat.GetShortestDayName(day)
+                    </ItemTemplate>
+                </SelectList>
+
                 <button type="submit" class="container w-100 btn btn-primary w-25 btn-lg">Додати</button>
             </div>
 
@@ -101,7 +96,6 @@ else
 
         try
         {
-
             var habit = new Habit
             {
                 Title = Input.Title,
@@ -111,7 +105,7 @@ else
                 IsCompleted = false,
             };
 
-            await HabitService.CreateHabitAsync(habit);
+            await HabitService.CreateHabitAsync(habit, Input.SelectedDays);
             Logger.LogInformation("User added a new habit successfully.");
             NavigationManager.NavigateTo("/Habits");
         }
@@ -134,9 +128,11 @@ else
     {
         [Required]
         public string Title { get; set; } = string.Empty;
-        
+
         public string Description { get; set; } = string.Empty;
         [Required]
         public Guid ColorId { get; set; }
+
+        public List<DayOfWeek> SelectedDays { get; set; } = [];
     }
 }

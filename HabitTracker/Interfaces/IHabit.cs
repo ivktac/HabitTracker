@@ -4,7 +4,7 @@ namespace HabitTracker.Interfaces;
 
 public interface IHabit
 {
-    Task CreateHabitAsync(Habit habit);
+    Task CreateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks);
 
     Task<Habit> GetHabitByIdAsync(Guid id);
 
