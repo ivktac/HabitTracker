@@ -1,4 +1,6 @@
 ﻿@page "/Habits/Add"
+@page "/Habits/Edit/{id:guid}"
+
 @rendermode InteractiveServer
 
 @using HabitTracker.Components.Account.Shared
@@ -20,7 +22,7 @@
 <PageTitle>Додати нову звичку</PageTitle>
 
 
-@if (Colors is null)
+@if (Colors is null || Input is null)
 {
     <p>Завантаження...</p>
 }
@@ -49,7 +51,6 @@ else
                 <div class="mb-3">
                     <label for="color" class="form-label">Колір:</label>
                     <div class="d-flex justify-content-between align-items-center mt-1">
-                        <div class="m-2" style="color: @(GetColorHexCode()); font-family: 'FontSupportingBrahmi'">&#11044;</div>
                         <select id="color" class="form-select" @bind="Input.ColorId">
                             <option value="0">Оберіть колір</option>
                             @foreach (var color in Colors)
@@ -77,52 +78,95 @@ else
 
 @code {
     private List<Color>? Colors { get; set; }
-    CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
+    private CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
+    private string title = string.Empty;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private InputModel? Input { get; set; }
+
+    [Parameter]
+    public Guid? Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Colors = await ColorService.GetColorsAsync();
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Input is not null)
+        {
+            return;
+        }
+
+        if (Id is not null)
+        {
+            var habit = await HabitService.GetHabitByIdAsync(Id!.Value);
+            var days = habit.Frequencies.Select(f => f.DayOfWeek).ToList();
+            Input = new InputModel
+            {
+                Title = habit.Title,
+                Description = habit.Description,
+                ColorId = habit.ColorId,
+                SelectedDays = habit.Frequencies.Select(f => f.DayOfWeek).ToList()
+            };
+
+            title = $"Редагувати звичку {Input.Title}";
+        }
+        else
+        {
+            Input = new InputModel();
+            title = "Додати нову звичку";
+        }
+    }
+
     private async Task OnValidSubmitAsync()
     {
-        if (Input.ColorId == Guid.Empty)
+        if (Input?.ColorId == Guid.Empty)
         {
             return;
         }
 
         try
         {
-            var habit = new Habit
+            if (Id is null)
             {
-                Title = Input.Title,
-                Description = Input.Description,
-                ColorId = Input.ColorId,
-                StartDate = DateTime.Now,
-                IsCompleted = false,
-            };
+                var habit = new Habit
+                {
+                    Title = Input!.Title,
+                    Description = Input.Description,
+                    ColorId = Input.ColorId,
+                    StartDate = DateTime.Now,
+                    IsCompleted = false,
+                };
+                await HabitService.CreateHabitAsync(habit, Input.SelectedDays);
+                Logger.LogInformation("User added a new habit successfully.");
+            }
+            else
+            {
+                var habit = await HabitService.GetHabitByIdAsync(Id!.Value);
+                habit.Title = Input!.Title;
+                habit.Description = Input.Description;
+                habit.ColorId = Input.ColorId;
 
-            await HabitService.CreateHabitAsync(habit, Input.SelectedDays);
-            Logger.LogInformation("User added a new habit successfully.");
+                await HabitService.UpdateHabitAsync(habit, Input.SelectedDays);
+                Logger.LogInformation("User updated a habit successfully.");
+            }
+
             NavigationManager.NavigateTo("/Habits");
         }
         catch (Exception ex)
         {
             Logger.LogError("Error occured: ", ex.ToString());
         }
-
     }
 
-    private async Task<string> GetColorHexCode()
+    private async Task GetColorHexCode(Guid colorId)
     {
-        var color = await ColorService.GetColorByIdAsync(Input.ColorId);
+        var color = await ColorService.GetColorByIdAsync(colorId);
 
-        return color.Code;
+        Logger.LogInformation($"Color hex code: {color.Code}");
     }
-
 
     private sealed class InputModel
     {

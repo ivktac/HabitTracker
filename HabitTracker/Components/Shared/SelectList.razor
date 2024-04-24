@@ -5,7 +5,9 @@
     {
         var id = Guid.NewGuid();
         <div class="m-2">
-            <input type="checkbox" class="btn-check" id="@id" autocomplete="off" @onchange="_ => OnChange(item)" />
+            <input type="checkbox" 
+                checked="@SelectedItems.Contains(item)"
+                class="btn-check" id="@id" autocomplete="off" @onchange="_ => OnChange(item)" />
             <label class="btn btn-outline-secondary" for="@id">
                 @ItemTemplate(item)
             </label>

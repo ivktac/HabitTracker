@@ -127,7 +127,7 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
             .ToListAsync();
     }
 
-    public async Task UpdateHabitAsync(Habit habit)
+    public async Task UpdateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks)
     {
         var userId = await GetUserIdAsync();
         if (string.IsNullOrEmpty(userId)) {
@@ -143,6 +143,26 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         }
 
         habit.UserId = userId;
+
+        if (dayOfWeeks is not null)
+        {
+            var frequencies = await context.Frequencies
+                .Where(f => f.HabitId == habit.Id)
+                .ToListAsync();
+
+            context.Frequencies.RemoveRange(frequencies);
+
+            foreach (var dayOfWeek in dayOfWeeks)
+            {
+                var frequency = new HabitFrequency
+                {
+                    DayOfWeek = dayOfWeek,
+                    HabitId = habit.Id
+                };
+
+                await context.Frequencies.AddAsync(frequency);
+            }
+        }
 
         var entry = context.Habits.Entry(habit);
         if (entry.State == EntityState.Detached)

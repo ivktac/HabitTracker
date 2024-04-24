@@ -4,6 +4,8 @@
 
 <div class="d-flex flex-column align-items-center justify-content-center">
     <h3 class="mx-5 px-5">Мої звички</h3>
+
+    <a href="/Habits/Add" class="btn btn-outline-primary m-5 btn-lg">Додати нову звичку</a>
     @if (Habits.Count == 0)
     {
         <em class="h5 mt-5">У вас ще немає жодної звички</em>
@@ -29,7 +31,9 @@
                             </em>
                         </div>
                         <div style="min-width: 75px">
-                            <a href="" class="btn btn-outline-primary btn-sm me-3">Edit</a>
+                            <a href="@GetUrl(habit.Id)" role="button" class="btn btn-primary me-3">
+                                <i class="bi bi-pencil">Edit</i>
+                            </a>
                             <a href="" class="text-danger text-decoration-none h4"></a>
                         </div>
                     </li>
@@ -37,7 +41,6 @@
             </ul>
         </div>
     }
-    <a href="/Habits/Add" class="btn btn-outline-primary m-5 btn-lg">Додати нову звичку</a>
 </div>
 
 @code {
@@ -45,6 +48,7 @@
     
     private CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
 
-
     protected async override Task OnInitializedAsync() => Habits = await HabitService.GetHabitsAsync();
+
+    private static string GetUrl(Guid id) => $"/Habits/Edit/{id}";
 }

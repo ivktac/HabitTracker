@@ -10,7 +10,7 @@ public interface IHabit
 
     Task DeleteHabitAsync(Habit habit);
 
-    Task UpdateHabitAsync(Habit habit);
+    Task UpdateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks);
 
     Task<List<Habit>> GetHabitsAsync();
 
