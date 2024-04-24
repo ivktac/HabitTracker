@@ -1,11 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    <AuthorizeView>
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    </AuthorizeView>
 
-    <main class="d-flex flex-column align-items-center justify-content-center content px-4">
+    <main class="container">
         @Body
     </main>
 

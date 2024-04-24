@@ -10,14 +10,16 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Register confirmation</PageTitle>
+<PageTitle>Підтвердження реєстрації</PageTitle>
 
-<h1>Register confirmation</h1>
+<h1>Підтвердження реєстрації</h1>
 
 <StatusMessage Message="@statusMessage" />
 
 
 <p>Будь ласка підтвердіть свою електронну пошту, натиснувши на посилання, яке ми вам надіслали.</p>
+
+<a href="/Account/Login">Увійти</a>
 
 @code {
     private string? statusMessage;
