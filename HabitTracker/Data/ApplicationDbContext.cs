@@ -12,6 +12,8 @@ namespace HabitTracker.Data
 
         public DbSet<HabitFrequency> Frequencies { get; set; }
 
+        public DbSet<HabitRecord> Records { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

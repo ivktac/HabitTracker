@@ -28,6 +28,8 @@ public class Habit
     [JsonIgnore]
 
     public List<HabitFrequency> Frequencies { get; set; } = [];
+    [JsonIgnore]
+    public List<HabitRecord> Records { get; set; } = [];
 
 
     [NotMapped]
