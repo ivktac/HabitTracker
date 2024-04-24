@@ -15,4 +15,8 @@ public interface IHabit
     Task<List<Habit>> GetHabitsAsync();
 
     Task<List<Habit>> GetUncompletedHabitsAsync();
+
+    Task<int> CalculateHabitStreakAsync(Guid habitId);
+
+    Task<int> CalculateProgressThisWeek();
 }

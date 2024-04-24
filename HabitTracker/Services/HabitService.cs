@@ -172,4 +172,29 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
 
         await context.SaveChangesAsync();
     }
+
+    public Task<int> CalculateHabitStreakAsync(Guid habitId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<int> CalculateProgressThisWeek()
+    {
+        var userId = await GetUserIdAsync();
+        if (string.IsNullOrEmpty(userId)) {
+            throw new Exception("User not found");
+        }
+
+        var habits = await context.Habits
+            .Include(h => h.Frequencies)
+            .Where(h => h.UserId == userId)
+            .ToListAsync();
+
+        int total = 0;
+        int completed = 0;
+
+        // TODO: complete this code 
+
+        return total == 0 ? 0 : (completed * 100) / total;
+    }
 }

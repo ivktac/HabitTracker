@@ -1,0 +1,55 @@
+﻿@if (Habits is null)
+{
+    <p>Завантаження...</p>
+}
+else
+{
+        <table class="table my-4">
+            <thead>
+                <tr>
+                    <th></th>
+                    @foreach (var day in DaysOfWeek)
+                    {
+                        <th>@ukrainian.DateTimeFormat.GetShortestDayName(day)</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var habit in Habits)
+                {
+                    <tr style="line-height: 2rem">
+                        <th scope="row">@habit.Title</th>
+                        @foreach (var day in DaysOfWeek)
+                        {
+                            <td>
+                            <input type="checkbox" checked="@GetChecked(habit, day)" disabled
+                                   class="form-check-input mt-0"
+                                style="height: 1.6rem; width: 1.6rem;"
+                                id="@habit.Id" />
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+}
+
+@code {
+    [Parameter]
+    public List<Habit>? Habits { get; set; }
+
+    private CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
+
+    private List<DayOfWeek> DaysOfWeek = Enum.GetValues<DayOfWeek>().ToList();
+
+    private bool GetChecked(Habit habit, DayOfWeek day)
+    {
+        var frequencies = habit.Frequencies;
+        return frequencies.Any(f => f.DayOfWeek == day);
+    }
+
+    private string GetCheckedClass(Habit habit, DayOfWeek day)
+    {
+        return GetChecked(habit, day) ? "bg-success" : "bg-danger";
+    }
+}
