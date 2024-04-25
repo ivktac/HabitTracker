@@ -177,10 +177,13 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
 
                 await context.Frequencies.AddAsync(frequency);
 
+                var beforeRecord = records.FirstOrDefault(r => r.Date.DayOfWeek == dayOfWeek);
+
                 var record = new HabitRecord
                 {
                     Date = DateTime.Now.Date.AddDays(-(int)DateTime.Now.DayOfWeek).AddDays((int)dayOfWeek),
-                    HabitId = habit.Id
+                    HabitId = habit.Id,
+                    IsDone = beforeRecord?.IsDone ?? false
                 };
                 await context.Records.AddAsync(record);
             }

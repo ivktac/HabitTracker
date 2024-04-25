@@ -59,6 +59,6 @@ else
 
     private string GetStyleForHabit(Habit habit, int day)
     {
-        return habit.Records.Any(r => r.Date.Day == day) ? $"background-color: {habit.HexCode}; color: #fff" : string.Empty;
+        return habit.Records.Any(r => r.Date.Day == day && r.IsDone) ? $"background-color: {habit.HexCode}; color: #fff" : string.Empty;
     }
 }

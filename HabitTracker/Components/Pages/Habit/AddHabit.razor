@@ -181,6 +181,8 @@ else
         [Required(ErrorMessage = "Поле колір є обов'язковим")]
         public string? ColorId { get; set; }
 
+        [Required(ErrorMessage = "Оберіть хоча б один день")]
+        [MinLength(1, ErrorMessage = "Оберіть хоча б один день")]
         public List<DayOfWeek> SelectedDays { get; set; } = [
             DayOfWeek.Monday,
             DayOfWeek.Tuesday,
