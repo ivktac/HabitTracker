@@ -1,4 +1,7 @@
-﻿<div class="container">
+﻿@inject IRecord RecordService
+@inject NavigationManager NavigationManager
+
+<div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>
             @GetDayName(), @GetDate()
@@ -17,20 +20,16 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
-                    @if (habit.IsCompleted)
+                    @if (habit.TodayRecord.IsDone)
                     {
                         <div>Виконано</div>
                         <div>Відмінити</div>
                     }
                     else
                     {
-                        <form class="d-flex align-items-start w-100">
-                            <AntiforgeryToken />
-                            <input type="hidden" value="@habit.Id" />
-                            <button class="btn btn-outline-primary w-100 fw-bold">
-                                Позначити як виконано
-                            </button>
-                        </form>
+                        <button class="btn btn-outline-primary w-100 fw-bold" @onclick="_ => MarkAsCompleted(habit.Id)">
+                            Позначити як виконано
+                        </button>
                     }
                 </div>
             </div>
@@ -73,7 +72,7 @@
     private string GetTaskClasses(Habit habit)
     {
         var classes = "d-flex flex-column justify-content-between p-3 task";
-        if (habit.IsCompleted)
+        if (habit.TodayRecord.IsDone)
         {
             classes += " completed";
         }
@@ -82,6 +81,12 @@
 
     private string GetTaskStyle(Habit habit)
     {
-        return habit.IsCompleted ? $"background-color: {habit.HexCode};" : "";
+        return habit.TodayRecord.IsDone ? $"background-color: {habit.HexCode};" : "";
+    }
+
+    private async Task MarkAsCompleted(Guid habitId)
+    {
+        await RecordService.MarkAsComplete(habitId);
+        NavigationManager.NavigateTo(NavigationManager.Uri, true);
     }
 }

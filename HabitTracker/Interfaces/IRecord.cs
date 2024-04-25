@@ -4,13 +4,7 @@ namespace HabitTracker.Interfaces;
 
 public interface IRecord
 {
-    Task<List<HabitRecord>> GetThisWeek();
+    Task<int> GetProgressDoneWeek(DateTime dateTime);
 
-    Task<List<HabitRecord>> GetToday();
-
-    Task<int> GetProgressDoneWeek();
-
-    Task MarkAsComplete();
-
-    Task CreateRecord(Guid habitId);
+    Task MarkAsComplete(Guid habitId);
 }

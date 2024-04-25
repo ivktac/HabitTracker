@@ -105,6 +105,7 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         return await context.Habits
             .Include(h => h.Color)
             .Include(h => h.Frequencies)
+            .Include(h => h.Records)
             .Where(h => h.UserId == userId)
             .ToListAsync();
     }

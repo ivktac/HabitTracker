@@ -54,6 +54,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, SmtpEmailSender>();
 
 builder.Services.AddScoped<IHabit, HabitService>();
 builder.Services.AddScoped<IColor, ColorService>();
+builder.Services.AddScoped<IRecord, RecordService>();
 
 var app = builder.Build();
 
