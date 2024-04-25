@@ -11,9 +11,13 @@
     <div class="d-flex flex-column justify-content-between pb-2 m-2">
         @foreach (var habit in Habits)
         {
-            <div class="@GetTaskClasses(habit)" style="@GetTaskStyle(habit)">
+            <div class="d-flex flex-column justify-content-between p-3 task @GetTaskClasses(habit)" style="@GetTaskStyle(habit)">
                 <div class="d-flex justify-content-between mb-3">
-                    <div class="task-title fw-bold">@habit.Title</div>
+                    <div class="task-title fw-bold">
+                        <a class="task-title fw-bold text-decoration-none @GetTaskClasses(habit)" href="@GetUrl(habit)">
+                            @habit.Title
+                        </a>
+                    </div>
                     @* <div> *@
                         @* Calculate here streak *@
                     @*     10🔥
@@ -82,7 +86,7 @@
 
     private string GetTaskClasses(Habit habit)
     {
-        var classes = "d-flex flex-column justify-content-between p-3 task";
+        var classes = "";
         @if (!habit.Frequencies.Any(f => f.DayOfWeek == DateTime.Now.DayOfWeek))
         {
             classes += " inactive";
@@ -110,5 +114,10 @@
     {
         await RecordService.MarkAsComplete(habitId, false);
         NavigationManager.Refresh(forceReload: true);
+    }
+
+    private string GetUrl(Habit habit)
+    {
+        return $"/Habits/{habit.Id}";
     }
 }

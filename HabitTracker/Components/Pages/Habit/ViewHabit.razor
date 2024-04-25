@@ -1,0 +1,64 @@
+﻿@page "/Habits/{id:guid}"
+
+@inject IHabit HabitService
+
+
+@if (habit is null)
+{
+    <p>Завантаження...</p>
+}
+else
+{
+    <div class="container my-5">
+        <h1>@habit.Title</h1>
+        <p class="fw-bold">@CurrentDate.ToString("MMMM", culture)</p>
+        <div id="calendar" class="calendar">
+            @foreach (var day in Enumerable.Range(1, DateTime.DaysInMonth(CurrentDate.Year, CurrentDate.Month)))
+            {
+                <div class="day" style="@GetStyleForHabit(habit, day)">
+                    @day
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+<style>
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+
+    .day {
+        width: 2em;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.25rem;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    CultureInfo culture = new CultureInfo("uk-UA");
+
+    private Habit? habit { get; set;}
+
+    private DateTime CurrentDate => DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        habit = await HabitService.GetHabitByIdAsync(Id);
+    }
+
+    private string GetStyleForHabit(Habit habit, int day)
+    {
+        return habit.Records.Any(r => r.Date.Day == day) ? $"background-color: {habit.HexCode}; color: #fff" : string.Empty;
+    }
+}

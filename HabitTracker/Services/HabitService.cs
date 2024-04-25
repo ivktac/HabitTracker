@@ -40,6 +40,7 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         await context.Habits.AddAsync(habit);
         if (dayOfWeeks is not null)
         {
+            var currentDate = DateTime.Now;
             foreach (var dayOfWeek in dayOfWeeks)
             {
                 var frequency = new HabitFrequency
@@ -49,6 +50,12 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
                 };
 
                 await context.Frequencies.AddAsync(frequency);
+                var record = new HabitRecord
+                {
+                    Date = currentDate.Date.AddDays(-(int)currentDate.DayOfWeek).AddDays((int)dayOfWeek),
+                    HabitId = habit.Id
+                };
+                await context.Records.AddAsync(record);
             }
         }
 
@@ -88,6 +95,7 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         return await context.Habits
             .Include(h => h.Color)
             .Include(h => h.Frequencies)
+            .Include(h => h.Records)
             .Where(h => h.UserId == userId)
             .FirstOrDefaultAsync(h => h.Id == id) ?? throw new Exception("Habit not found");
 
@@ -152,6 +160,13 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
 
             context.Frequencies.RemoveRange(frequencies);
 
+            // remove all records based on frequencies
+            var records = await context.Records
+                .Where(r => r.HabitId == habit.Id)
+                .ToListAsync();
+
+            context.Records.RemoveRange(records.Where(r => frequencies.Any(f => f.DayOfWeek == r.Date.DayOfWeek)));
+
             foreach (var dayOfWeek in dayOfWeeks)
             {
                 var frequency = new HabitFrequency
@@ -161,6 +176,13 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
                 };
 
                 await context.Frequencies.AddAsync(frequency);
+
+                var record = new HabitRecord
+                {
+                    Date = DateTime.Now.Date.AddDays(-(int)DateTime.Now.DayOfWeek).AddDays((int)dayOfWeek),
+                    HabitId = habit.Id
+                };
+                await context.Records.AddAsync(record);
             }
         }
 
