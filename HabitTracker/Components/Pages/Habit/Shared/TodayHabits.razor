@@ -1,22 +1,87 @@
-﻿
-<div class="d-flex flex-column m-2 p-2">
-    <h3 class="text-center">Навички сьогодні</h3>
-    @foreach (var habit in Habits)
-    {
-        <div class="card m-2">
-            <div class="card-body">
-                <div class="card-title fw-bold">
-                    <span style="color: @habit.HexCode;">&#11044;</span>
-                    @habit.Title
+﻿<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>
+            @GetDayName(), @GetDate()
+        </h4>
+    </div>
+
+    <div class="d-flex flex-column justify-content-between pb-2 m-2">
+        @foreach (var habit in Habits)
+        {
+            <div class="@GetTaskClasses(habit)" style="@GetTaskStyle(habit)">
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="task-title fw-bold">@habit.Title</div>
+                    <div>
+                        @* Calculate here streak *@
+                        10🔥
+                    </div>
                 </div>
-                <p class="card-text">@habit.Description</p>
-                <a href="#" class="btn btn-primary w-100">Завершити</a>
+                <div class="d-flex justify-content-between align-items-center">
+                    @if (habit.IsCompleted)
+                    {
+                        <div>Виконано</div>
+                        <div>Відмінити</div>
+                    }
+                    else
+                    {
+                        <form class="d-flex align-items-start w-100">
+                            <AntiforgeryToken />
+                            <input type="hidden" value="@habit.Id" />
+                            <button class="btn btn-outline-primary w-100 fw-bold">
+                                Позначити як виконано
+                            </button>
+                        </form>
+                    }
+                </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
 
+<style>
+    .task {
+        border-radius: 20px;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    .task-title {
+        font-size: 1.1rem;
+    }
+
+    .completed {
+        color: #fff;
+    }
+</style>
+
 @code {
+    private CultureInfo culture = new CultureInfo("uk-UA");
+
     [Parameter]
     public List<Habit> Habits { get; set; } = [];
+
+    private string GetDayName()
+    {
+        return culture.DateTimeFormat.GetShortestDayName(DateTime.Now.DayOfWeek);
+    }
+
+    private string GetDate()
+    {
+        return DateTime.Now.ToString("MMMM dd", culture);
+    }
+
+    private string GetTaskClasses(Habit habit)
+    {
+        var classes = "d-flex flex-column justify-content-between p-3 task";
+        if (habit.IsCompleted)
+        {
+            classes += " completed";
+        }
+        return classes;
+    }
+
+    private string GetTaskStyle(Habit habit)
+    {
+        return habit.IsCompleted ? $"background-color: {habit.HexCode};" : "";
+    }
 }
