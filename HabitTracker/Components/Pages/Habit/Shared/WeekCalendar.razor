@@ -22,11 +22,11 @@ else
                     @foreach (var day in DaysOfWeek)
                     {
                         <td>
-                            @if (habit.Frequencies.Any(f => f.DayOfWeek == day))
+                            @if (habit.Records.Any(f => f.Date.DayOfWeek == day))
                             {
                                 <input type="checkbox" checked="@GetChecked(habit, day)" disabled
                                         class="form-check-input mt-0"
-                                       style="height: 1.6rem; width: 1.6rem; background-color: @habit.HexCode; border-color: @habit.HexCode;"
+                                       style="@GetCheckedStyle(habit, day)"
                                         id="@habit.Id" />
                             }
                         </td>
@@ -47,12 +47,15 @@ else
 
     private bool GetChecked(Habit habit, DayOfWeek day)
     {
-        var frequencies = habit.Frequencies;
-        return frequencies.Any(f => f.DayOfWeek == day);
+        var records = habit.Records.Where(r => r.Date.DayOfWeek == day);
+        return records.All(r => r.IsDone);
     }
 
-    private string GetCheckedClass(Habit habit, DayOfWeek day)
+    private string GetCheckedStyle(Habit habit, DayOfWeek day)
     {
-        return GetChecked(habit, day) ? "bg-success" : "bg-danger";
+        var style = "height: 1.6rem; width: 1.6rem;";
+
+        return GetChecked(habit, day) ? $"{style} background-color: {habit.HexCode}; border-color: {habit.HexCode};" : style;
     }
+
 }

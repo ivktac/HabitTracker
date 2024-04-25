@@ -14,10 +14,10 @@
             <div class="@GetTaskClasses(habit)" style="@GetTaskStyle(habit)">
                 <div class="d-flex justify-content-between mb-3">
                     <div class="task-title fw-bold">@habit.Title</div>
-                    <div>
+                    @* <div> *@
                         @* Calculate here streak *@
-                        10🔥
-                    </div>
+                    @*     10🔥
+                    </div> *@
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     @if (habit.TodayRecord.IsDone)
