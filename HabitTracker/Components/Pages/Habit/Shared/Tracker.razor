@@ -13,13 +13,10 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="@ProgressValue" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar" style="width: @GetProgress(ProgressValue)">@GetProgress(ProgressValue)</div>
-                </div>
                 <WeekCalendar Habits="@Habits" />
             </div>
             <div class="col-md-4">
-                <TodayHabits Habits="@TodayHabits" />
+                <TodayHabits Habits="@Habits" />
             </div>
         </div>
     </div>
