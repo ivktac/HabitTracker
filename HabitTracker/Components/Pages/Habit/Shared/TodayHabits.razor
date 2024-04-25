@@ -23,7 +23,7 @@
                     @if (habit.TodayRecord.IsDone)
                     {
                         <div>Виконано</div>
-                        <div>Відмінити</div>
+                        <button class="btn btn-outline-danger" @onclick="_ => MarkAsUncompleted(habit.Id)">Відмінити</button>
                     }
                     else
                     {
@@ -86,7 +86,11 @@
 
     private async Task MarkAsCompleted(Guid habitId)
     {
-        await RecordService.MarkAsComplete(habitId);
-        NavigationManager.NavigateTo(NavigationManager.Uri, true);
+        await RecordService.MarkAsComplete(habitId, true);
+    }
+
+    private async Task MarkAsUncompleted(Guid habitId)
+    {
+        await RecordService.MarkAsComplete(habitId, false);
     }
 }

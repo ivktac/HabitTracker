@@ -36,13 +36,5 @@ public class Habit
     public HabitRecord TodayRecord => Records.FirstOrDefault(r => r.Date.Date == DateTime.Now.Date) ?? new HabitRecord();
 
     [NotMapped]
-    public int StreakMax => Records
-        .Where(r => r.IsDone)
-        .Select(r => r.Date.Date)
-        .Aggregate((current, next) => current.AddDays(1) == next ? next : current)
-        .Subtract(StartDate.Date)
-        .Days;
-
-    [NotMapped]
     public string HexCode => Color.Code;
 }

@@ -49,7 +49,7 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
 
     }
 
-    public async Task MarkAsComplete(Guid habitId)
+    public async Task MarkAsComplete(Guid habitId, bool completed)
     {
         var userId = await GetUserIdAsync();
 
@@ -79,7 +79,7 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
             await context.Records.AddAsync(record);
         }
 
-        record.IsDone = true;
+        record.IsDone = completed;
         await context.SaveChangesAsync();
     }
 }

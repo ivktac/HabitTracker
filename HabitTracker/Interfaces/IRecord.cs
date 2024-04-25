@@ -6,5 +6,5 @@ public interface IRecord
 {
     Task<int> GetProgressDoneWeek(DateTime dateTime);
 
-    Task MarkAsComplete(Guid habitId);
+    Task MarkAsComplete(Guid habitId, bool completed);
 }
