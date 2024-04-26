@@ -9,26 +9,48 @@
 }
 else
 {
-    <div class="container my-5">
-        <h1>@habit.Title</h1>
-        <p class="fw-bold">@CurrentDate.ToString("MMMM", culture)</p>
-        <div id="calendar" class="calendar">
-            @foreach (var day in Enumerable.Range(1, DateTime.DaysInMonth(CurrentDate.Year, CurrentDate.Month)))
+    <div class="container m-5">
+        <h1 class="display-4">@habit.Title</h1>
+        <a class="btn btn-outline-info p-2 mb-3" href="@GetEditUrl(@habit.Id)">Редагувати</a>
+
+        
+        <div class="calendar">
+            @for (int month = 1; month <= 12; month++)
             {
-                <div class="day" style="@GetStyleForHabit(habit, day)">
-                    @day
+                <div class="month-row">
+                     <p class="fw-bold">@(new DateTime(CurrentDate.Year, month, 1).ToString("MMMM", culture)</p>
+                    <div id="@month" class="month">
+                        @foreach (var day in Enumerable.Range(1, DateTime.DaysInMonth(CurrentDate.Year, CurrentDate.Month)))
+                        {
+                            <div class="day" style="@GetStyleForHabit(habit, day, month)">
+                                @day
+                            </div>
+                        }
+                    </div>
                 </div>
             }
         </div>
+      
     </div>
 }
 
 
 <style>
     .calendar {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .month-row {
+        display: flex;
         gap: 0.5rem;
+    }
+
+    .month {
+        display: grid;
+        grid-template-columns: repeat(7, 2rem);
+        gap: 0.2rem;
         padding: 1rem;
     }
 
@@ -57,8 +79,10 @@ else
         habit = await HabitService.GetHabitByIdAsync(Id);
     }
 
-    private string GetStyleForHabit(Habit habit, int day)
+    private string GetStyleForHabit(Habit habit, int day, int month)
     {
-        return habit.Records.Any(r => r.Date.Day == day && r.IsDone) ? $"background-color: {habit.HexCode}; color: #fff" : string.Empty;
+        return habit.Records.Any(r => r.Date.Day == day && r.Date.Month == month && r.IsDone) ? $"background-color: {habit.HexCode}; color: #fff" : string.Empty;
     }
+
+    private static string GetEditUrl(Guid id) => $"/Habits/Edit/{id}";
 }
