@@ -160,13 +160,6 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
 
             context.Frequencies.RemoveRange(frequencies);
 
-            // remove all records based on frequencies
-            var records = await context.Records
-                .Where(r => r.HabitId == habit.Id)
-                .ToListAsync();
-
-            context.Records.RemoveRange(records.Where(r => frequencies.Any(f => f.DayOfWeek == r.Date.DayOfWeek)));
-
             foreach (var dayOfWeek in dayOfWeeks)
             {
                 var frequency = new HabitFrequency
@@ -176,16 +169,6 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
                 };
 
                 await context.Frequencies.AddAsync(frequency);
-
-                var beforeRecord = records.FirstOrDefault(r => r.Date.DayOfWeek == dayOfWeek);
-
-                var record = new HabitRecord
-                {
-                    Date = DateTime.Now.Date.AddDays(-(int)DateTime.Now.DayOfWeek).AddDays((int)dayOfWeek),
-                    HabitId = habit.Id,
-                    IsDone = beforeRecord?.IsDone ?? false
-                };
-                await context.Records.AddAsync(record);
             }
         }
 

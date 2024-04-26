@@ -22,7 +22,7 @@ else
                     @foreach (var day in DaysOfWeek)
                     {
                         <td>
-                            @if (habit.Records.Any(f => f.Date.DayOfWeek == day))
+                            @if (habit.Frequencies.Any(f => f.DayOfWeek == day) && habit.Records.Any(f => f.Date.DayOfWeek == day))
                             {
                                 <input type="checkbox" checked="@GetChecked(habit, day)" disabled
                                         class="form-check-input mt-0"

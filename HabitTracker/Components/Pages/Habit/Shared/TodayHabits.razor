@@ -87,7 +87,7 @@
     private string GetTaskClasses(Habit habit)
     {
         var classes = "";
-        @if (!habit.Frequencies.Any(f => f.DayOfWeek == DateTime.Now.DayOfWeek))
+        @if (!(habit.Frequencies.Any(f => f.DayOfWeek == DateTime.Now.DayOfWeek)))
         {
             classes += " inactive";
         }
@@ -101,7 +101,8 @@
 
     private string GetTaskStyle(Habit habit)
     {
-        return habit.TodayRecord.IsDone ? $"background-color: {habit.HexCode};" : "";
+        return habit.Frequencies.Any(f => f.DayOfWeek == DateTime.Now.DayOfWeek) &&  habit.TodayRecord.IsDone 
+            ? $"background-color: {habit.HexCode};" : "";
     }
 
     private async Task MarkAsCompleted(Guid habitId)
