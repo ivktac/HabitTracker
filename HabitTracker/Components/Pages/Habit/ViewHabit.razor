@@ -18,7 +18,7 @@ else
             @for (int month = 1; month <= 12; month++)
             {
                 <div class="month-row">
-                     <p class="fw-bold">@(new DateTime(CurrentDate.Year, month, 1).ToString("MMMM", culture)</p>
+                     <p class="fw-bold">@(new DateTime(CurrentDate.Year, month, 1).ToString("MMMM", culture))</p>
                     <div id="@month" class="month">
                         @foreach (var day in Enumerable.Range(1, DateTime.DaysInMonth(CurrentDate.Year, CurrentDate.Month)))
                         {
