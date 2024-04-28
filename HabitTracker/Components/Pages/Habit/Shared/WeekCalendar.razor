@@ -4,6 +4,10 @@
 }
 else
 {
+    <p class="fw-bold fs-4">
+        @GetCurrentWeekDate()
+    </p>
+
     <table class="table my-4">
         <thead>
             <tr>
@@ -22,7 +26,8 @@ else
                     @foreach (var day in DaysOfWeek)
                     {
                         <td>
-                            @if (habit.Frequencies.Any(f => f.DayOfWeek == day) && habit.Records.Any(f => f.Date.DayOfWeek == day))
+                            @if (habit.Frequencies.Any(f => f.DayOfWeek == day) && 
+                                habit.Records.Any(f => f.Date.DayOfWeek == day && f.Date.Date >= CurrentWeekDates.First() && f.Date.Date <= CurrentWeekDates.Last()))
                             {
                                 <input type="checkbox" checked="@GetChecked(habit, day)" disabled
                                         class="form-check-input mt-0"
@@ -43,7 +48,9 @@ else
 
     private CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
 
-    private List<DayOfWeek> DaysOfWeek = Enum.GetValues<DayOfWeek>().ToList();
+    private List<DayOfWeek> DaysOfWeek => Enum.GetValues<DayOfWeek>().ToList();
+
+    private List<DateTime> CurrentWeekDates => Enumerable.Range(0, 7).Select(i => DateTime.Today.AddDays(i - (int)DateTime.Today.DayOfWeek)).ToList();
 
     private bool GetChecked(Habit habit, DayOfWeek day)
     {
@@ -56,6 +63,17 @@ else
         var style = "height: 1.6rem; width: 1.6rem;";
 
         return GetChecked(habit, day) ? $"{style} background-color: {habit.HexCode}; border-color: {habit.HexCode};" : style;
+    }
+
+    private string GetCurrentWeekDate()
+    {
+        var monday = ukrainian.DateTimeFormat.GetShortestDayName(DaysOfWeek.First());
+        var sunday = ukrainian.DateTimeFormat.GetShortestDayName(DaysOfWeek.Last());
+
+        var startDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek).ToString("MMM dd", ukrainian);
+        var endDate = DateTime.Today.AddDays(6 - (int)DateTime.Today.DayOfWeek).ToString("MMM dd", ukrainian);
+
+        return $"{monday}, {startDate} - {sunday}, {endDate}";
     }
 
 }
