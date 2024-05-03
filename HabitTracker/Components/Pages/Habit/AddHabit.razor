@@ -174,8 +174,10 @@ else
     private sealed class InputModel
     {
         [Required(ErrorMessage="Назва звичка є обов'язковим")]
+        [StringLength(50, ErrorMessage = "Назва звички повинна бути не більше 50 символів")]
         public string Title { get; set; } = string.Empty;
 
+        [StringLength(200, ErrorMessage = "Опис звички повинен бути не більше 200 символів")]
         public string Description { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Поле колір є обов'язковим")]
