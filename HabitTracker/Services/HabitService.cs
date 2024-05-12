@@ -202,7 +202,25 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         int total = 0;
         int completed = 0;
 
-        // TODO: complete this code 
+        var today = DateTime.Now;
+        var startOfWeek = today.Date.AddDays(-(int)today.DayOfWeek);
+        var endOfWeek = startOfWeek.AddDays(6);
+
+        foreach (var habit in habits)
+        {
+            var featureRecords = await context.Frequencies
+                .Where(f => f.HabitId == habit.Id)
+                .Select(f => f.DayOfWeek)
+                .ToListAsync();
+
+            var records = await context.Records
+                .Where(r => r.HabitId == habit.Id)
+                .Where(r => r.Date >= startOfWeek && r.Date <= endOfWeek)
+                .ToListAsync();
+
+            total += featureRecords.Count;
+            completed += records.Count(r => r.IsDone);
+        }
 
         return total == 0 ? 0 : (completed * 100) / total;
     }

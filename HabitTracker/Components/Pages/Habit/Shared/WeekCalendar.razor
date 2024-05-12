@@ -8,6 +8,10 @@ else
         @GetCurrentWeekDate()
     </p>
 
+    <div class="progress" role="progressbar" aria-label="Example with label" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: @GetProgressValue()">@GetProgressValue()</div>
+    </div>
+
     <table class="table my-4">
         <thead>
             <tr>
@@ -46,6 +50,9 @@ else
     [Parameter]
     public List<Habit>? Habits { get; set; }
 
+    [Parameter]
+    public int ProgressValue { get; set; } = 0;
+
     private CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
 
     private List<DayOfWeek> DaysOfWeek => Enum.GetValues<DayOfWeek>().ToList();
@@ -76,4 +83,8 @@ else
         return $"{monday}, {startDate} - {sunday}, {endDate}";
     }
 
+    private string GetProgressValue()
+    {
+        return $"{ProgressValue}%";
+    }
 }

@@ -11,7 +11,7 @@ namespace HabitTracker.Components.Account
 
             if (user is null)
             {
-                redirectManager.RedirectToWithStatus("Account/InvalidUser", $"Помилка: Не вдалося завантажити користувача з ідентифікатором '{userManager.GetUserId(context.User)}'.", context);
+                redirectManager.RedirectToWithStatus("Account/InvalidUser", $"РџРѕРјРёР»РєР°: РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РєРѕСЂРёСЃС‚СѓРІР°С‡Р° Р· С–РґРµРЅС‚РёС„С–РєР°С‚РѕСЂРѕРј '{userManager.GetUserId(context.User)}'.", context);
             }
 
             return user;

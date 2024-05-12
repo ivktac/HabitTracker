@@ -15,7 +15,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <WeekCalendar Habits="@Habits" />
+                <WeekCalendar Habits="@Habits" ProgressValue="@ProgressValue" />
             </div>
             <div class="col-md-4">
                 <TodayHabits Habits="@Habits" />
@@ -31,7 +31,7 @@
 
     private string? greetingMessage;
 
-    private int ProgressValue = 75;
+    private int ProgressValue = 0;
 
     private DateTime CurrentDate => DateTime.Now;
 
@@ -51,11 +51,6 @@
             _ => "Вітаю, "
         };
 
-        // ProgressValue = await HabitService.CalculateProgressThisWeek();
-    }
-
-    private static string GetProgress(int progressValue)
-    {
-        return $"{progressValue}%";
+        ProgressValue = await HabitService.CalculateProgressThisWeek();
     }
 }
