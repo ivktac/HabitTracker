@@ -7,34 +7,20 @@ using System.Security.Claims;
 
 namespace HabitTracker.Services;
 
-public class HabitService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider) : IHabit
+public class HabitService : BaseService, IHabit
 {
-    private async Task<string?> GetUserIdAsync()
+    public HabitService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
+        : base(context, authenticationStateProvider)
     {
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        string? userId = null;
-
-        if (user.Identity is not null && user.Identity.IsAuthenticated)
-        {
-            userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        }
-
-        return userId;
     }
 
     public async Task CreateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks)
     {
-        var userId = await GetUserIdAsync();
-
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new Exception("User not found");
-        }
+        var userId = await GetCurrentUserIdAsync();
 
         habit.UserId = userId;
 
-        await context.Habits.AddAsync(habit);
+        await _context.Habits.AddAsync(habit);
         if (dayOfWeeks is not null)
         {
             var currentDate = DateTime.Now;
@@ -46,99 +32,60 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
                     HabitId = habit.Id
                 };
 
-                await context.Frequencies.AddAsync(frequency);
+                await _context.Frequencies.AddAsync(frequency);
                 var record = new HabitRecord
                 {
                     Date = currentDate.Date.AddDays(-(int)currentDate.DayOfWeek).AddDays((int)dayOfWeek),
                     HabitId = habit.Id
                 };
-                await context.Records.AddAsync(record);
+                await _context.Records.AddAsync(record);
             }
         }
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteHabitAsync(Guid id)
     {
-        var habit = await context.Habits.FindAsync(id) ?? throw new Exception("Habit not found");
-        var userId = await GetUserIdAsync();
-
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new Exception("User not found");
-        }
+        var habit = await _context.Habits.FindAsync(id) ?? throw new Exception("Помилка: звичку не знайдено");
+        var userId = await GetCurrentUserIdAsync();
 
         if (habit.UserId != userId)
         {
-            throw new Exception("Habit not found");
+            throw new Exception("Помилка: відмовлено у доступі");
         }
 
-        var entry = await context.Habits.FindAsync(habit.Id);
+        var entry = await _context.Habits.FindAsync(habit.Id);
         if (entry != null)
         {
-            context.Habits.Remove(entry);
-            await context.SaveChangesAsync();
+            _context.Habits.Remove(entry);
+            await _context.SaveChangesAsync();
         }
     }
 
     public async Task<Habit> GetHabitByIdAsync(Guid id)
-    {
-        var userId = await GetUserIdAsync();
-        if (string.IsNullOrEmpty(userId)) {
-            throw new Exception("User not found");
-        }
-
-        return await context.Habits
-            .Include(h => h.Color)
-            .Include(h => h.Frequencies)
-            .Include(h => h.Records)
-            .Where(h => h.UserId == userId)
-            .FirstOrDefaultAsync(h => h.Id == id) ?? throw new Exception("Habit not found");
-
-    }
+        => await GetUserHabits().FirstOrDefaultAsync(h => h.Id == id) ?? throw new Exception("Помилка: звичку не знайдено");
 
     public async Task<List<Habit>> GetHabitsAsync()
-    {
-        var userId = await GetUserIdAsync();
-
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new Exception("User not found");
-        }
-
-        return await context.Habits
-            .Include(h => h.Color)
-            .Include(h => h.Frequencies)
-            .Include(h => h.Records)
-            .Where(h => h.UserId == userId)
-            .ToListAsync();
-    }
+        => await GetUserHabits().ToListAsync();
 
     public async Task UpdateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks)
     {
-        var userId = await GetUserIdAsync();
-        if (string.IsNullOrEmpty(userId)) {
-            throw new Exception("User not found");
-        }
+        var userId = await GetCurrentUserIdAsync();
+        habit.UserId = userId;
 
-        if (habit.UserId != userId) {
-            throw new Exception("Habit not found");
-        }
-
-        if (!habit.IsCompleted) {
+        if (!habit.IsCompleted)
+        {
             habit.EndDate = DateTime.Now;
         }
 
-        habit.UserId = userId;
-
         if (dayOfWeeks is not null)
         {
-            var frequencies = await context.Frequencies
+            var frequencies = await _context.Frequencies
                 .Where(f => f.HabitId == habit.Id)
                 .ToListAsync();
 
-            context.Frequencies.RemoveRange(frequencies);
+            _context.Frequencies.RemoveRange(frequencies);
 
             foreach (var dayOfWeek in dayOfWeeks)
             {
@@ -148,17 +95,28 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
                     HabitId = habit.Id
                 };
 
-                await context.Frequencies.AddAsync(frequency);
+                await _context.Frequencies.AddAsync(frequency);
             }
         }
 
-        var entry = context.Habits.Entry(habit);
+        var entry = _context.Habits.Entry(habit);
         if (entry.State == EntityState.Detached)
         {
-            context.Habits.Attach(habit);
+            _context.Habits.Attach(habit);
             entry.State = EntityState.Modified;
         }
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
+    }
+
+    private IQueryable<Habit> GetUserHabits()
+    {
+        var userId = GetCurrentUserIdAsync().Result;
+
+        return _context.Habits
+            .Include(h => h.Color)
+            .Include(h => h.Frequencies)
+            .Include(h => h.Records)
+            .Where(h => h.UserId == userId);
     }
 }

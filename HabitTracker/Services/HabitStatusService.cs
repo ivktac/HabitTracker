@@ -7,58 +7,53 @@ using System.Security.Claims;
 
 namespace HabitTracker.Services;
 
-public class HabitStatusService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider) : IHabitStatus
+public class HabitStatusService : BaseService, IHabitStatus
 {
-    private async Task<string?> GetUserIdAsync()
+    public HabitStatusService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
+        : base(context, authenticationStateProvider)
     {
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        string? userId = null;
-
-        if (user.Identity is not null && user.Identity.IsAuthenticated)
-        {
-            userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        }
-
-        return userId;
     }
 
     public async Task<int> CalculateProgressThisWeek()
     {
-        var userId = await GetUserIdAsync();
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new Exception("User not found");
-        }
+        var userId = await GetCurrentUserIdAsync();
 
-        var habits = await context.Habits
-            .Include(h => h.Frequencies)
-            .Where(h => h.UserId == userId)
-            .ToListAsync();
+        var habits = await GetUserHabits().ToListAsync();
 
         int total = 0;
         int completed = 0;
 
-        var today = DateTime.Now;
-        var startOfWeek = today.Date.AddDays(-(int)today.DayOfWeek);
+        var today = DateTime.Now.Date;
+        var startOfWeek = today.AddDays(-(int)today.DayOfWeek);
         var endOfWeek = startOfWeek.AddDays(6);
 
         foreach (var habit in habits)
         {
-            var featureRecords = await context.Frequencies
+            var featureRecords = await _context.Frequencies
                 .Where(f => f.HabitId == habit.Id)
                 .Select(f => f.DayOfWeek)
                 .ToListAsync();
 
-            var records = await context.Records
-                .Where(r => r.HabitId == habit.Id)
-                .Where(r => r.Date >= startOfWeek && r.Date <= endOfWeek)
-                .ToListAsync();
+            var records = await GetRecordsFilteredByDate(habit.Id, startOfWeek, endOfWeek);
 
             total += featureRecords.Count;
             completed += records.Count(r => r.IsDone);
         }
 
-        return total == 0 ? 0 : (completed * 100) / total;
+        return total == 0 ? 0 : completed * 100 / total;
     }
+
+    private IQueryable<Habit> GetUserHabits()
+    {
+        var userId = GetCurrentUserIdAsync().Result;
+
+        return _context.Habits
+            .Include(h => h.Frequencies)
+            .Where(h => h.UserId == userId);
+    }
+
+    private async Task<List<HabitRecord>> GetRecordsFilteredByDate(Guid habitId, DateTime startDate, DateTime endDate)
+        => await _context.Records
+            .Where(r => r.HabitId == habitId && r.Date >= startDate && r.Date <= endDate)
+            .ToListAsync();
 }
