@@ -15,9 +15,6 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         var user = authState.User;
         string? userId = null;
 
-        Console.WriteLine(user.Identity?.IsAuthenticated);
-        Console.WriteLine(user.Identity?.Name);
-
         if (user.Identity is not null && user.Identity.IsAuthenticated)
         {
             userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -118,23 +115,6 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
             .ToListAsync();
     }
 
-    public async Task<List<Habit>> GetUncompletedHabitsAsync()
-    {
-        var userId = await GetUserIdAsync();
-
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new Exception("User not found");
-        }
-
-        return await context.Habits
-            .Include(h => h.Color)
-            .Include(h => h.Frequencies)
-            .Where(h => h.UserId == userId)
-            .Where(h => !h.IsCompleted)
-            .ToListAsync();
-    }
-
     public async Task UpdateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks)
     {
         var userId = await GetUserIdAsync();
@@ -180,48 +160,5 @@ public class HabitService(ApplicationDbContext context, AuthenticationStateProvi
         }
 
         await context.SaveChangesAsync();
-    }
-
-    public Task<int> CalculateHabitStreakAsync(Guid habitId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<int> CalculateProgressThisWeek()
-    {
-        var userId = await GetUserIdAsync();
-        if (string.IsNullOrEmpty(userId)) {
-            throw new Exception("User not found");
-        }
-
-        var habits = await context.Habits
-            .Include(h => h.Frequencies)
-            .Where(h => h.UserId == userId)
-            .ToListAsync();
-
-        int total = 0;
-        int completed = 0;
-
-        var today = DateTime.Now;
-        var startOfWeek = today.Date.AddDays(-(int)today.DayOfWeek);
-        var endOfWeek = startOfWeek.AddDays(6);
-
-        foreach (var habit in habits)
-        {
-            var featureRecords = await context.Frequencies
-                .Where(f => f.HabitId == habit.Id)
-                .Select(f => f.DayOfWeek)
-                .ToListAsync();
-
-            var records = await context.Records
-                .Where(r => r.HabitId == habit.Id)
-                .Where(r => r.Date >= startOfWeek && r.Date <= endOfWeek)
-                .ToListAsync();
-
-            total += featureRecords.Count;
-            completed += records.Count(r => r.IsDone);
-        }
-
-        return total == 0 ? 0 : (completed * 100) / total;
     }
 }

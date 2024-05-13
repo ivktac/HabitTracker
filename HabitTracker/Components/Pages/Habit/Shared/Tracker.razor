@@ -1,4 +1,5 @@
 ﻿@inject IHabit HabitService
+@inject IHabitStatus HabitStatusService
 
 <div class="container">
     <AuthorizeView>
@@ -51,6 +52,6 @@
             _ => "Вітаю, "
         };
 
-        ProgressValue = await HabitService.CalculateProgressThisWeek();
+        ProgressValue = await HabitStatusService.CalculateProgressThisWeek();
     }
 }
