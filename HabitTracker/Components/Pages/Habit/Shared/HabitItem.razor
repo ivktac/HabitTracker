@@ -2,7 +2,7 @@
     <div class="m-3">
         <div class="fw-bold h5 text-break">
             <span style="color: @Habit.HexCode">&#11044;</span>
-            @Habit.Title
+            <a href="@GetHabitUrl(Habit.Id)">@Habit.Title</a>
         </div>
         <em class="text-body-secondary">
             @foreach (var frequency in Habit.Frequencies)
@@ -24,6 +24,13 @@
     <DeleteHabit Habit="@Habit" />
 </li>
 
+<style>
+    a {
+        text-decoration: none;
+        color: black;
+    }
+</style>
+
 @code {
     [Parameter]
     public required Habit Habit { get; set; }
@@ -34,4 +41,6 @@
     private CultureInfo _culture = CultureInfo.GetCultureInfo("uk-UA");
 
     private string GetDeleteModal() => $"#deleteModal-{Habit.Id}";
+
+    private string GetHabitUrl(Guid id) => $"/Habits/{id}";
 }
