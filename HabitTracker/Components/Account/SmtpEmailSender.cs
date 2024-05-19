@@ -8,13 +8,13 @@ namespace HabitTracker.Components.Account
     {
 
         public Task SendConfirmationLinkAsync(ApplicationUser user, string email, string confirmationLink) =>
-            SendEmailAsync(email, "Confirm your email", $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
+            SendEmailAsync(email, "Confirm your email", $"Підтвердьте свій обліковий запис <a href='{confirmationLink}'>натиснувши тут</a>.");
 
         public Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink) =>
-            SendEmailAsync(email, "Reset your password", $"Please reset your password by <a href='{resetLink}'>clicking here</a>.");
+            SendEmailAsync(email, "Reset your password", $"Будь ласка, скиньте свій пароль <a href='{resetLink}'>натиснувши тут</a>.");
 
         public Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode) =>
-            SendEmailAsync(email, "Reset your password", $"Please reset your password using the following code: {resetCode}");
+            SendEmailAsync(email, "Reset your password", $"Будь ласка, скиньте свій пароль за допомогою наступного коду: {resetCode}");
 
         private async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
