@@ -49,9 +49,10 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
 
     }
 
-    public async Task MarkAsComplete(Guid habitId, bool completed)
+    public async Task MarkAsComplete(Guid habitId, bool completed, DateTime? date = null)
     {
         var userId = await GetUserIdAsync();
+        var current = date ?? DateTime.Now;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -66,14 +67,14 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
         }
 
         var record = await context.Records
-            .FirstOrDefaultAsync(r => r.HabitId == habitId && r.Date == DateTime.Now.Date);
+            .FirstOrDefaultAsync(r => r.HabitId == habitId && r.Date == current.Date);
 
         if (record is null)
         {
             record = new HabitRecord
             {
                 HabitId = habitId,
-                Date = DateTime.Now.Date,
+                Date = current.Date,
             };
 
             await context.Records.AddAsync(record);

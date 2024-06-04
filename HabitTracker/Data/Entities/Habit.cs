@@ -33,7 +33,9 @@ public class Habit
 
 
     [NotMapped]
-    public HabitRecord TodayRecord => Records.FirstOrDefault(r => r.Date.Date == DateTime.Now.Date) ?? new HabitRecord();
+    public HabitRecord TodayRecord => GetRecord(DateTime.Now);
+
+    public HabitRecord GetRecord(DateTime date) => Records.FirstOrDefault(r => r.Date.Date == date.Date) ?? new HabitRecord();
 
     [NotMapped]
     public string HexCode => Color.Code;

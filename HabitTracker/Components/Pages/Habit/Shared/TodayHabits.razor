@@ -24,13 +24,13 @@
                     </div> *@
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
-                    @if (!habit.Frequencies.Any(f => f.DayOfWeek == DateTime.Now.DayOfWeek))
+                    @if (!habit.Frequencies.Any(f => f.DayOfWeek == CurrentDate.DayOfWeek))
                     {
                         <div class="inactive">
                             Не активний сьогодні
                         </div>
                     }
-                    else if (habit.TodayRecord.IsDone)
+                    else if (habit.GetRecord(CurrentDate).IsDone)
                     {
                         <div>Виконано</div>
                         <button class="btn fw-bold text-light" @onclick="_ => MarkAsUncompleted(habit.Id)">Відмінити</button>
@@ -72,26 +72,29 @@
     private CultureInfo culture = new CultureInfo("uk-UA");
 
     [Parameter]
+    public DateTime CurrentDate { get; set; } = DateTime.Now;
+
+    [Parameter]
     public List<Habit> Habits { get; set; } = [];
 
     private string GetDayName()
     {
-        return culture.DateTimeFormat.GetShortestDayName(DateTime.Now.DayOfWeek);
+        return culture.DateTimeFormat.GetShortestDayName(CurrentDate.DayOfWeek);
     }
 
     private string GetDate()
     {
-        return DateTime.Now.ToString("MMMM dd", culture);
+        return CurrentDate.ToString("MMMM dd", culture);
     }
 
     private string GetTaskClasses(Habit habit)
     {
         var classes = "";
-        @if (!(habit.Frequencies.Any(f => f.DayOfWeek == DateTime.Now.DayOfWeek)))
+        @if (!(habit.Frequencies.Any(f => f.DayOfWeek == CurrentDate.DayOfWeek)))
         {
             classes += " inactive";
         }
-        else if (habit.TodayRecord.IsDone)
+        else if (habit.GetRecord(CurrentDate).IsDone)
         {
             classes += " completed";
         }
@@ -101,19 +104,19 @@
 
     private string GetTaskStyle(Habit habit)
     {
-        return habit.Frequencies.Any(f => f.DayOfWeek == DateTime.Now.DayOfWeek) &&  habit.TodayRecord.IsDone 
+        return habit.Frequencies.Any(f => f.DayOfWeek == CurrentDate.DayOfWeek) &&  habit.GetRecord(CurrentDate).IsDone 
             ? $"background-color: {habit.HexCode};" : "";
     }
 
     private async Task MarkAsCompleted(Guid habitId)
     {
-        await RecordService.MarkAsComplete(habitId, true);
+        await RecordService.MarkAsComplete(habitId, true, CurrentDate);
         NavigationManager.Refresh(forceReload: true);
     }
 
     private async Task MarkAsUncompleted(Guid habitId)
     {
-        await RecordService.MarkAsComplete(habitId, false);
+        await RecordService.MarkAsComplete(habitId, false, CurrentDate);
         NavigationManager.Refresh(forceReload: true);
     }
 

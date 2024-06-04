@@ -19,7 +19,12 @@
                 <WeekCalendar Habits="@Habits" ProgressValue="@ProgressValue" />
             </div>
             <div class="col-md-4">
-                <TodayHabits Habits="@TodayHabits" />
+                <div class="container mb-3 d-flex justify-content-between">
+                    <button class="btn btn-secondary" @onclick="PreviousDay">←</button>
+                    <button class="btn btn-primary" @onclick="SetToday">Сьогодні</button>
+                    <button class="btn btn-secondary" @onclick="NextDay" disabled="@IsEnabledButton">→</button>
+                </div>
+                <TodayHabits Habits="@TodayHabits" CurrentDate="@CurrentDate" />
             </div>
         </div>
     </div>
@@ -34,15 +39,19 @@
 
     private int ProgressValue = 0;
 
-    private DateTime CurrentDate => DateTime.Now;
+    private DateTime CurrentDate { get; set; } = DateTime.Now;
 
     private List<Habit> Habits { get; set; } = [];
 
-    private List<Habit> TodayHabits => Habits.Where(h => h.Frequencies.Any(f => f.DayOfWeek == CurrentDate.DayOfWeek)).ToList();
+    private List<Habit> TodayHabits { get; set; } = [];
+
+    private bool IsEnabledButton => DateTime.Now.Date <= CurrentDate.Date;
 
     protected async override Task OnInitializedAsync()
     {
         Habits = await HabitService.GetHabitsAsync();
+
+        UpdateTodayHabits();
 
         greetingMessage = CurrentDate.Hour switch
         {
@@ -53,5 +62,34 @@
         };
 
         ProgressValue = await HabitStatusService.CalculateProgressThisWeek();
+    }
+
+    private void PreviousDay()
+    {
+        CurrentDate = CurrentDate.AddDays(-1);
+        UpdateTodayHabits();
+    }
+
+    private void NextDay()
+    {
+        if (IsEnabledButton)
+        {
+            return;
+        }
+
+        CurrentDate = CurrentDate.AddDays(1);
+        UpdateTodayHabits();
+    }
+
+    private void SetToday()
+    {
+        CurrentDate = DateTime.Now;
+        UpdateTodayHabits();
+    }
+
+
+    private void UpdateTodayHabits()
+    {
+        TodayHabits = Habits.Where(h => h.Frequencies.Any(f => f.DayOfWeek == CurrentDate.DayOfWeek)).ToList();
     }
 }
