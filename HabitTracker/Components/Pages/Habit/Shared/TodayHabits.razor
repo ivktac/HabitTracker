@@ -77,6 +77,9 @@
     [Parameter]
     public List<Habit> Habits { get; set; } = [];
 
+    [Parameter]
+    public EventCallback OnHabitUpdated { get; set; }
+
     private string GetDayName()
     {
         return culture.DateTimeFormat.GetShortestDayName(CurrentDate.DayOfWeek);
@@ -111,12 +114,14 @@
     private async Task MarkAsCompleted(Guid habitId)
     {
         await RecordService.MarkAsComplete(habitId, true, CurrentDate);
+        await OnHabitUpdated.InvokeAsync();
         NavigationManager.Refresh(forceReload: false);
     }
 
     private async Task MarkAsUncompleted(Guid habitId)
     {
         await RecordService.MarkAsComplete(habitId, false, CurrentDate);
+        await OnHabitUpdated.InvokeAsync();
         NavigationManager.Refresh(forceReload: false);
     }
 
