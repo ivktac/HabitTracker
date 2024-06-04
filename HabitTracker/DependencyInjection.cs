@@ -41,6 +41,8 @@ public static class DependencyInjection
 
         services.AddSingleton<IEmailSender<ApplicationUser>, SmtpEmailSender>();
 
+        services.AddHostedService<DailyEmailService>();
+
         return services;
     }
 

@@ -63,8 +63,22 @@ public class HabitService : BaseService, IHabit
         }
     }
 
+    public async Task<List<ApplicationUser>> GetAllUsersAsync()
+    {
+        return await _context.Users.ToListAsync();
+    }
+
     public async Task<Habit> GetHabitByIdAsync(Guid id)
         => await GetUserHabits().FirstOrDefaultAsync(h => h.Id == id) ?? throw new Exception("Помилка: звичку не знайдено");
+
+    public async Task<List<Habit>> GetHabitForUserAsync(string userId, DayOfWeek dayOfWeek)
+    {
+        return await _context.Habits
+            .Include(h => h.Frequencies)
+            .Where(h => h.UserId == userId)
+            .Where(h => h.Frequencies.Any(f => f.DayOfWeek == dayOfWeek))
+            .ToListAsync();
+    }
 
     public async Task<List<Habit>> GetHabitsAsync()
         => await GetUserHabits().ToListAsync();

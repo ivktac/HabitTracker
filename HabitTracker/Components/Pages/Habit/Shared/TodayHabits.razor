@@ -111,13 +111,13 @@
     private async Task MarkAsCompleted(Guid habitId)
     {
         await RecordService.MarkAsComplete(habitId, true, CurrentDate);
-        NavigationManager.Refresh(forceReload: true);
+        NavigationManager.Refresh(forceReload: false);
     }
 
     private async Task MarkAsUncompleted(Guid habitId)
     {
         await RecordService.MarkAsComplete(habitId, false, CurrentDate);
-        NavigationManager.Refresh(forceReload: true);
+        NavigationManager.Refresh(forceReload: false);
     }
 
     private string GetUrl(Habit habit)
