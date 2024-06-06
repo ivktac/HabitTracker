@@ -48,8 +48,8 @@ public class DailyEmailService(IServiceProvider serviceProvider, IFluentEmailFac
 
                     var emailMessage = _emailFactory.Create()
                         .To(user.Email)
-                        .Subject("Your daily habits")
-                        .Body($"Your daily habits for today: <br>{habitList}", true);
+                        .Subject("Ваші щоденні звички")
+                        .Body($"Ваші звички на сьогодні: <br>{habitList}", true);
 
                     await emailMessage.SendAsync();
                 }
