@@ -12,6 +12,7 @@ else
         <div class="progress-bar" style="width: @GetProgressValue()">@GetProgressValue()</div>
     </div>
 
+
     <table class="table my-4">
         <thead>
             <tr>
@@ -44,6 +45,12 @@ else
             }
         </tbody>
     </table>
+
+    <div class="container mb-3 d-flex justify-content-between">
+        <button class="btn btn-secondary" @onclick="PreviousWeek">←</button>
+        <button class="btn btn-primary" @onclick="SetCurrentWeek">Сьогодні</button>
+        <button class="btn btn-secondary" @onclick="NextWeek" disabled="@IsEnabledButton">→</button>
+    </div>
 }
 
 @code {
@@ -53,11 +60,13 @@ else
     [Parameter]
     public int ProgressValue { get; set; } = 0;
 
+    private DateTime CurrentDate { get; set; } = DateTime.Today;
+
     private CultureInfo ukrainian = CultureInfo.GetCultureInfo("uk-UA");
 
     private List<DayOfWeek> DaysOfWeek => Enum.GetValues<DayOfWeek>().ToList();
 
-    private List<DateTime> CurrentWeekDates => Enumerable.Range(0, 7).Select(i => DateTime.Today.AddDays(i - (int)DateTime.Today.DayOfWeek)).ToList();
+    private List<DateTime> CurrentWeekDates => Enumerable.Range(0, 7).Select(i => CurrentDate.AddDays(i - (int)CurrentDate.DayOfWeek)).ToList();
 
     private bool GetChecked(Habit habit, DayOfWeek day)
     {
@@ -77,8 +86,8 @@ else
         var monday = ukrainian.DateTimeFormat.GetShortestDayName(DaysOfWeek.First());
         var sunday = ukrainian.DateTimeFormat.GetShortestDayName(DaysOfWeek.Last());
 
-        var startDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek).ToString("MMM dd", ukrainian);
-        var endDate = DateTime.Today.AddDays(6 - (int)DateTime.Today.DayOfWeek).ToString("MMM dd", ukrainian);
+        var startDate = CurrentDate.AddDays(-(int)CurrentDate.DayOfWeek).ToString("MMM dd", ukrainian);
+        var endDate =CurrentDate.AddDays(6 - (int)CurrentDate.DayOfWeek).ToString("MMM dd", ukrainian);
 
         return $"{monday}, {startDate} - {sunday}, {endDate}";
     }
@@ -86,5 +95,27 @@ else
     private string GetProgressValue()
     {
         return $"{ProgressValue}%";
+    }
+
+    private bool IsEnabledButton => DateTime.Today.Date <= CurrentDate.Date;
+
+    private void NextWeek()
+    {
+        if (IsEnabledButton)
+        {
+            return;
+        }
+
+        CurrentDate = CurrentDate.AddDays(7);
+    }
+
+    private void PreviousWeek()
+    {
+        CurrentDate = CurrentDate.AddDays(-7);
+    }
+
+    private void SetCurrentWeek()
+    {
+        CurrentDate = DateTime.Today;
     }
 }
