@@ -51,15 +51,16 @@ else
                 <div class="mb-3">
                     <label for="color" class="form-label">Колір:</label>
                     <div class="d-flex m-2 justify-content-between align-items-center">
-                        <InputSelect id="color" @bind-Value="Input.ColorId" class="form-select">
-                            <option value="">Оберіть колір</option>
+                        <div class="btn-group" role="group" aria-label="Days of week">
                             @foreach (var color in Colors)
                             {
-                                <option style="color: @color.Code" value="@color.Id.ToString()">
-                                    @color.Name
-                                </option>
+                                <div class="m-2">
+                                    <input type="checkbox" checked="@Input.ColorId == color.Id.ToString()" class="btn-check color-input" id="@color.Id" autocomplete="off" @onchange="_ => Input.ColorId = color.Id.ToString()" />
+                                    <label class="rounded-3 btn m-1 color-label" for="@color.Id" style="background-color: @color.Code; width: 50%; height: 100%;">
+                                    </label>
+                                </div>
                             }
-                        </InputSelect>
+                        </div>
                     </div>
                     <ValidationMessage For="@(() => Input.ColorId)" />
                 </div>
@@ -88,6 +89,11 @@ else
     </div>
 }
 
+<style>
+    .color-input:not(:checked) + .color-label {
+        border: 2px solid #000;
+    }
+</style>
 
 @code {
     private List<Color>? Colors { get; set; }
