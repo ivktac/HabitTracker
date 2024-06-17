@@ -6,6 +6,7 @@ using HabitTracker.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Net.Mail;
 
 namespace HabitTracker;
@@ -32,12 +33,15 @@ public static class DependencyInjection
         var emailSettings = new EmailSettings();
         configuration.Bind(EmailSettings.Section, emailSettings);
 
+        var smtpClient = new SmtpClient(emailSettings.SmtpSettings.Host)
+        {
+            Port = emailSettings.SmtpSettings.Port,
+            Credentials = new NetworkCredential(emailSettings.SmtpSettings.Username, emailSettings.SmtpSettings.Password),
+            EnableSsl = true
+        };
+
         services.AddFluentEmail(emailSettings.DefaultFromEmail)
-            .AddSmtpSender(new SmtpClient(emailSettings.SmtpSettings.Host)
-            {
-                Port = emailSettings.SmtpSettings.Port
-                // Credentials = new NetworkCredential(emailSettings.SmtpSettings.Username, emailSettings.SmtpSettings.Password)
-            });
+            .AddSmtpSender(smtpClient);
 
         services.AddSingleton<IEmailSender<ApplicationUser>, SmtpEmailSender>();
 
