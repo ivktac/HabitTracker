@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace HabitTracker.Services;
 
-public class RecordService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider) : IRecord
+public class RecordService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider) : IRecordService
 {
     private async Task<string?> GetUserIdAsync()
     {

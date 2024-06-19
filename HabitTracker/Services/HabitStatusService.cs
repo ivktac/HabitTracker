@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace HabitTracker.Services;
 
-public class HabitStatusService : BaseService, IHabitStatus
+public class HabitStatusService : BaseService, IHabitStatusService
 {
     public HabitStatusService(ApplicationDbContext context, AuthenticationStateProvider authenticationStateProvider)
         : base(context, authenticationStateProvider)

@@ -14,31 +14,39 @@ namespace Microsoft.AspNetCore.Routing
 {
     internal static class IdentityComponentsEndpointRouteBuilderExtensions
     {
-        // These endpoints are required by the Identity Razor components defined in the /Components/Account/Pages directory of this project.
         public static IEndpointConventionBuilder MapAdditionalIdentityEndpoints(this IEndpointRouteBuilder endpoints)
         {
             ArgumentNullException.ThrowIfNull(endpoints);
 
             var accountGroup = endpoints.MapGroup("/Account");
+            accountGroup.MapLogoutEndpoint();
+            accountGroup.MapManageEndpoints();
 
-            accountGroup.MapPost("/Logout", async (
-                ClaimsPrincipal user,
-                SignInManager<ApplicationUser> signInManager,
-                [FromForm] string returnUrl) =>
+            return accountGroup;
+        }
+    
+        private static void MapLogoutEndpoint(this IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapPost("/Logout", async (ClaimsPrincipal user, SignInManager<ApplicationUser> signInManager, [FromForm] string returnUrl) =>
             {
                 await signInManager.SignOutAsync();
                 return TypedResults.LocalRedirect($"~/{returnUrl}");
             });
+        }
 
-            var manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
-
+        private static void MapManageEndpoints(this IEndpointRouteBuilder endpoints)
+        {
+            var manageGroup = endpoints.MapGroup("/Manage").RequireAuthorization();
             var loggerFactory = endpoints.ServiceProvider.GetRequiredService<ILoggerFactory>();
+
+            manageGroup.MapDownloadPersonalDataEndpoint(loggerFactory);
+        }
+
+        private static void MapDownloadPersonalDataEndpoint(this IEndpointRouteBuilder endpoints, ILoggerFactory loggerFactory)
+        {
             var downloadLogger = loggerFactory.CreateLogger("DownloadPersonalData");
 
-            manageGroup.MapPost("/DownloadPersonalData", async (
-                HttpContext context,
-                [FromServices] UserManager<ApplicationUser> userManager,
-                [FromServices] AuthenticationStateProvider authenticationStateProvider) =>
+            endpoints.MapPost("/DownloadPersonalData", async (HttpContext context, UserManager<ApplicationUser> userManager, AuthenticationStateProvider authenticationStateProvider) =>
             {
                 var user = await userManager.GetUserAsync(context.User);
                 if (user is null)
@@ -46,32 +54,39 @@ namespace Microsoft.AspNetCore.Routing
                     return Results.NotFound($"Unable to load user with ID '{userManager.GetUserId(context.User)}'.");
                 }
 
+
                 var userId = await userManager.GetUserIdAsync(user);
                 downloadLogger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
 
-                // Only include personal data for download
-                var personalData = new Dictionary<string, string>();
-                var personalDataProps = typeof(ApplicationUser).GetProperties().Where(
-                    prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
-                foreach (var p in personalDataProps)
-                {
-                    personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
-                }
-
-                var logins = await userManager.GetLoginsAsync(user);
-                foreach (var l in logins)
-                {
-                    personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
-                }
-
-                personalData.Add("Authenticator Key", (await userManager.GetAuthenticatorKeyAsync(user))!);
+                var personalData = await CollectPersonalData(userManager, user);
                 var fileBytes = JsonSerializer.SerializeToUtf8Bytes(personalData);
 
                 context.Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json");
                 return TypedResults.File(fileBytes, contentType: "application/json", fileDownloadName: "PersonalData.json");
-            });
 
-            return accountGroup;
+            });
+        }
+
+        private static async Task<Dictionary<string, string>> CollectPersonalData(UserManager<ApplicationUser> userManager, ApplicationUser user)
+        {
+            var personalData = new Dictionary<string, string>();
+            var personalDataProps = typeof(ApplicationUser).GetProperties()
+                .Where(prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
+
+            foreach (var prop in personalDataProps)
+            {
+                personalData[prop.Name] = prop.GetValue(user)?.ToString() ?? "null";
+            }
+
+            var logins = await userManager.GetLoginsAsync(user);
+            foreach (var login in logins)
+            {
+                personalData[$"{login.LoginProvider} external login provider key"] = login.ProviderKey;
+            }
+
+            personalData["Authenticator Key"] = await userManager.GetAuthenticatorKeyAsync(user) ?? string.Empty;
+
+            return personalData;
         }
     }
 }

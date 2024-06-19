@@ -1,8 +1,6 @@
-﻿using HabitTracker.Data.Entities;
+﻿namespace HabitTracker.Interfaces;
 
-namespace HabitTracker.Interfaces;
-
-public interface IRecord
+public interface IRecordService
 {
     Task<int> GetProgressDoneWeek(DateTime dateTime);
 

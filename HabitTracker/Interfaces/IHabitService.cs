@@ -3,7 +3,7 @@ using HabitTracker.Data.Entities;
 
 namespace HabitTracker.Interfaces;
 
-public interface IHabit
+public interface IHabitService
 {
     Task CreateHabitAsync(Habit habit, List<DayOfWeek>? dayOfWeeks);
 
