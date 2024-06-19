@@ -36,7 +36,7 @@ public class DailyEmailService(IServiceProvider serviceProvider, IFluentEmailFac
     {
         using (var scope = _serviceProvider.CreateScope())
         {
-            var habitService = scope.ServiceProvider.GetRequiredService<IHabit>();
+            var habitService = scope.ServiceProvider.GetRequiredService<IHabitService>();
             var users = await habitService.GetAllUsersAsync();
 
             foreach (var user in users)

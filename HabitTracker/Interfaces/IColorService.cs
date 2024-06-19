@@ -2,7 +2,7 @@
 
 namespace HabitTracker.Interfaces;
 
-public interface IColor
+public interface IColorService
 {
     Task<List<Color>> GetColorsAsync();
 

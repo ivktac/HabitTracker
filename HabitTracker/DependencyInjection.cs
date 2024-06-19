@@ -93,10 +93,10 @@ public static class DependencyInjection
 
     private static IServiceCollection AddRequiredServices(this IServiceCollection services)
     {
-        services.AddScoped<IHabit, HabitService>();
-        services.AddScoped<IHabitStatus, HabitStatusService>();
-        services.AddScoped<IColor, ColorService>();
-        services.AddScoped<IRecord, RecordService>();
+        services.AddScoped<IHabitService, HabitService>();
+        services.AddScoped<IHabitStatusService, HabitStatusService>();
+        services.AddScoped<IColorService, ColorService>();
+        services.AddScoped<IRecordService, RecordService>();
 
         return services;
     }

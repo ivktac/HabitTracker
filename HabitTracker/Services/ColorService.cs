@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HabitTracker.Services
 {
-    public class ColorService(ApplicationDbContext context) : IColor
+    public class ColorService(ApplicationDbContext context) : IColorService
     {
         public async Task<List<Color>> GetColorsAsync() => await context.Colors.ToListAsync();
 
