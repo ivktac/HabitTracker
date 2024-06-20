@@ -1,31 +1,39 @@
 ﻿@page "/Challenges"
 @inject IChallengeService ChallengeService
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var challenge in Challenges)
-        {
+@if (Challenges is null)
+{
+    <p><em>Завантаження...</em></p>
+}
+else
+{
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>@challenge.Title</td>
-                <td>@challenge.Description</td>
-                <td>@challenge.StartDate.ToShortDateString()</td>
-                <td>@challenge.EndDate.ToShortDateString()</td>
-                <td>
-                    <a href="/Challenges/Details/@challenge.Id">Details</a>
-                </td>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var challenge in Challenges)
+            {
+                <tr>
+                    <td>@challenge.Title</td>
+                    <td>@challenge.Description</td>
+                    <td>@challenge.StartDate.ToShortDateString()</td>
+                    <td>@challenge.EndDate.ToShortDateString()</td>
+                    <td>
+                        <a href="/Challenges/Details/@challenge.Id">Детальніше</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
     private List<Challenge> Challenges { get; set; } = [];

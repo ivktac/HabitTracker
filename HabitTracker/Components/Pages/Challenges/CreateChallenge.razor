@@ -1,0 +1,66 @@
+﻿@page "/Challenges/Create"
+@using System.ComponentModel.DataAnnotations
+@inject IChallengeService ChallengeService
+@inject NavigationManager Navigation
+
+<EditForm Model="Model" OnValidSubmit="HandleValidSubmit" FormName="chalenge-create">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Назва</label>
+        <InputText class="form-control" @bind-Value="Model.Title" />
+    </div>
+    <div class="form-group">
+        <label>Опис</label>
+        <InputText class="form-control" @bind-Value="Model.Description" />
+    </div>
+    <div class="form-group">
+        <label>Дата початку</label>
+        <InputDate class="form-control" @bind-Value="Model.StartDate" />
+    </div>
+    <div class="form-group">
+        <label>Дата закінчення</label>
+        <InputDate class="form-control" @bind-Value="Model.EndDate" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Створити</button>
+</EditForm>
+
+
+@code {
+    private Challenge? challenge { get; set; }
+
+    [SupplyParameterFromForm]
+    private InputModel Model { get; set; } = new InputModel();
+
+    private async Task HandleValidSubmit()
+    {
+        challenge = new Challenge
+        {
+            Title = Model.Title,
+            Description = Model.Description,
+            StartDate = Model.StartDate,
+            EndDate = Model.EndDate
+        };
+
+        await ChallengeService.CreateChallengeAsync(challenge);
+        Navigation.NavigateTo("/Challenges");
+    }
+
+    sealed class InputModel
+    {
+        [Required]
+        public string Title { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
+
+        [Required]
+        [Range(typeof(DateTime), "1/1/2024", "1/1/2030")]
+        public DateTime StartDate { get; set; } = DateTime.Now;
+
+        [Required]
+        [Range(typeof(DateTime), "1/1/2024", "1/1/2030")]
+        public DateTime EndDate { get; set; }
+    }
+}
