@@ -107,32 +107,32 @@ namespace HabitTracker.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4fa8c8a9-5233-446d-8322-690f5d60be12"),
+                            Id = new Guid("f56c2517-6f49-45f7-8bf1-49b134c268e0"),
                             Name = "Health"
                         },
                         new
                         {
-                            Id = new Guid("3571ab54-8fa8-4ce0-83a2-fbddf8194a00"),
+                            Id = new Guid("b7cd1a43-47b4-4039-b732-7f98aaa41b8a"),
                             Name = "Fitness"
                         },
                         new
                         {
-                            Id = new Guid("e05e1700-9970-478d-82de-f4b8a5368d92"),
+                            Id = new Guid("1f0ad6c8-72e6-41a2-b6de-7c13132a812e"),
                             Name = "Hobbies"
                         },
                         new
                         {
-                            Id = new Guid("78260af3-3273-427b-b1d6-a3986f1c805c"),
+                            Id = new Guid("0c93ebbb-be28-45a7-b1c8-5fc9eb874eb5"),
                             Name = "Work"
                         },
                         new
                         {
-                            Id = new Guid("81c3ebca-6e57-4a63-9f0d-599dd9201459"),
+                            Id = new Guid("e6094215-eaa6-4eb8-a2dc-0100ce984726"),
                             Name = "Study"
                         },
                         new
                         {
-                            Id = new Guid("594e6c82-3e56-40cc-88a9-9d75d88ed00d"),
+                            Id = new Guid("43bcfcd0-1b8a-4696-9946-a8da22fb2065"),
                             Name = "Personal"
                         },
                         new
@@ -170,7 +170,7 @@ namespace HabitTracker.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Challenges");
+                    b.ToTable("Challenges", (string)null);
                 });
 
             modelBuilder.Entity("HabitTracker.Data.Entities.Color", b =>
@@ -194,85 +194,85 @@ namespace HabitTracker.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a9d707d2-7728-4fa6-bfdd-9511bce5804e"),
+                            Id = new Guid("7e83aa6d-6f23-4e39-b34c-3b7fb37b4a2b"),
                             Code = "#dc8a78",
                             Name = "Rosewater"
                         },
                         new
                         {
-                            Id = new Guid("24b222f8-e404-4db4-aa65-48a699063221"),
+                            Id = new Guid("5f27353d-766c-4753-800f-ceb753cc2429"),
                             Code = "#dd7878",
                             Name = "Flamingo"
                         },
                         new
                         {
-                            Id = new Guid("60fd634e-0fa3-4079-9ad8-10d10b14fa93"),
+                            Id = new Guid("ed0435c8-dc7c-451c-862d-5abe62cc3a74"),
                             Code = "#ea76cb",
                             Name = "Pink"
                         },
                         new
                         {
-                            Id = new Guid("be29ec66-fd8b-4335-8452-2080320f2062"),
+                            Id = new Guid("38a84c40-e687-4b57-ac4e-d4634d0927ab"),
                             Code = "#8839ef",
                             Name = "Mauve"
                         },
                         new
                         {
-                            Id = new Guid("e27f6428-76d7-4657-9d11-ff1d11568af7"),
+                            Id = new Guid("1a357101-cd88-4f93-9f33-1e92748eeb4e"),
                             Code = "#d20f39",
                             Name = "Red"
                         },
                         new
                         {
-                            Id = new Guid("5c2ea0cc-fef6-47f4-810f-1a3b87dedf6a"),
+                            Id = new Guid("972a56e8-6e39-4e92-b754-85def6a8b436"),
                             Code = "#e64553",
                             Name = "Maroon"
                         },
                         new
                         {
-                            Id = new Guid("9109f349-3211-49b5-ae12-349841bd6534"),
+                            Id = new Guid("104184da-8caf-4e67-8ab5-ef9908c14dfb"),
                             Code = "#fe640b",
                             Name = "Peach"
                         },
                         new
                         {
-                            Id = new Guid("7b360f3e-f1d2-4524-86f8-79e0c033046a"),
+                            Id = new Guid("3a4882c1-174b-4518-bac5-d4c866569a54"),
                             Code = "#df8e1d",
                             Name = "Yellow"
                         },
                         new
                         {
-                            Id = new Guid("f3401b60-42cb-4808-b02c-18a751f5f975"),
+                            Id = new Guid("78ee4a6e-e067-4eca-b827-c78159baeac0"),
                             Code = "#40a02b",
                             Name = "Green"
                         },
                         new
                         {
-                            Id = new Guid("0c783413-2d80-41d4-abe4-569d4c6d2527"),
+                            Id = new Guid("225d861a-9fda-4156-a130-6d404e33e1a3"),
                             Code = "#179299",
                             Name = "Teal"
                         },
                         new
                         {
-                            Id = new Guid("a903da47-40c3-4d28-805b-dc22a680f83b"),
+                            Id = new Guid("7812036d-4c4a-428d-8bbf-9aa27c7fc6fe"),
                             Code = "#04a5e5",
                             Name = "Sky"
                         },
                         new
                         {
-                            Id = new Guid("28e4f72b-3787-48af-883f-a48e796f397e"),
+                            Id = new Guid("9ab20c5d-9383-4d93-b22b-8937a8b0d55d"),
                             Code = "#209fb5",
                             Name = "Sapphire"
                         },
                         new
                         {
-                            Id = new Guid("c141754e-2261-41cd-a57f-991c16f83f94"),
+                            Id = new Guid("936956ed-5b81-44a9-a472-a71870be09fe"),
                             Code = "#1e66f5",
                             Name = "Blue"
                         },
                         new
                         {
-                            Id = new Guid("9864ed69-f2c6-4cd0-b8ce-0e58bd15bd92"),
+                            Id = new Guid("39320063-5a5c-4302-b780-cedbc7e0834b"),
                             Code = "#7287fd",
                             Name = "Lavender"
                         });
@@ -386,7 +386,7 @@ namespace HabitTracker.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Participants");
+                    b.ToTable("Participants", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -527,7 +527,7 @@ namespace HabitTracker.Migrations
                     b.HasOne("HabitTracker.Data.ApplicationUser", "CreatedBy")
                         .WithMany("CreatedChallenges")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
@@ -587,13 +587,13 @@ namespace HabitTracker.Migrations
                     b.HasOne("HabitTracker.Data.Entities.Challenge", "Challenge")
                         .WithMany("Participants")
                         .HasForeignKey("ChallengeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HabitTracker.Data.ApplicationUser", "User")
                         .WithMany("JoinedChallenges")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Challenge");
