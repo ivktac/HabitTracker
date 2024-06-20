@@ -88,4 +88,49 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
         record.IsDone = completed;
         await context.SaveChangesAsync();
     }
+
+    public async Task<int> GetHabitStreak(Guid habitId)
+    {
+        var userId = await GetUserIdAsync();
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new Exception("User not found");
+        }
+
+        var habit = await context.Habits.FindAsync(habitId) ?? throw new Exception("Habit not found");
+
+        if (habit.UserId != userId)
+        {
+            throw new Exception("Habit not found");
+        }
+
+        var records = await context.Records
+            .Where(r => r.HabitId == habitId && r.IsDone)
+            .OrderByDescending(r => r.Date)
+            .ToListAsync();
+
+        int streak = 0;
+        DateTime? previousDate = null;
+
+        foreach (var record in records)
+        {
+            if (previousDate == null)
+            {
+                previousDate = record.Date;
+            }
+
+            if (record.Date == previousDate)
+            {
+                streak++;
+                previousDate = previousDate.Value.AddDays(-1);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return streak;
+    }
 }

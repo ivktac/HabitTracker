@@ -3,7 +3,6 @@ using HabitTracker.Data.Entities;
 using HabitTracker.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace HabitTracker.Services;
 
