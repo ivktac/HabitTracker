@@ -7,14 +7,12 @@ namespace HabitTracker.Data
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
         public DbSet<Habit> Habits { get; set; }
-        
         public DbSet<Color> Colors { get; set; }
-
         public DbSet<HabitFrequency> Frequencies { get; set; }
-
         public DbSet<HabitRecord> Records { get; set; }
-
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Challenge> Challenges { get; set; }
+        public DbSet<Participant> Participants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -15,9 +15,6 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
         var user = authState.User;
         string? userId = null;
 
-        Console.WriteLine(user.Identity?.IsAuthenticated);
-        Console.WriteLine(user.Identity?.Name);
-
         if (user.Identity is not null && user.Identity.IsAuthenticated)
         {
             userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
