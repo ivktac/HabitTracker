@@ -53,12 +53,28 @@ public class ChallengeService : BaseService, IChallengeService
             .ToListAsync();
     }
 
+    public async Task<bool> IsUserInChallenge(Challenge challenge)
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId is null)
+        {
+            return false;
+        }
+
+        return challenge.Participants.Any(p => p.UserId == userId);
+    }
+
     public async Task JoinChallengeAsync(Guid challengeId)
     {
         var userId = await GetCurrentUserIdAsync();
         if (userId is null)
         {
             throw new Exception("Помилка: користувач не знайдений");
+        }
+
+        if (await _context.Participants.AnyAsync(p => p.ChallengeId == challengeId && p.UserId == userId))
+        {
+            return;
         }
 
         var participant = new Participant

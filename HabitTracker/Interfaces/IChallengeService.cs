@@ -13,4 +13,6 @@ public interface IChallengeService
     Task JoinChallengeAsync(Guid challengeId);
 
     Task<List<Challenge>> GetUserChallengesAsync();
+
+    Task<bool> IsUserInChallenge(Challenge challenge);
 }

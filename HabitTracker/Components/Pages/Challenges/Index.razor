@@ -16,6 +16,7 @@ else
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,16 @@ else
                     <td>
                         <a href="/Challenges/Details/@challenge.Id">Детальніше</a>
                     </td>
+                    <td>
+                        @if (!JoinedChallenges.GetValueOrDefault(challenge.Id, false))
+                        {
+                            <button @onclick="() => JoinChallenge(challenge.Id)" class="btn btn-primary">Приєднатися</button>
+                        }
+                        else
+                        {
+                            <a class="text-secondary" style="text-decoration: none" disabled>Ви вже приєднались</a>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
@@ -38,5 +49,19 @@ else
 @code {
     private List<Challenge> Challenges { get; set; } = [];
 
-    protected async override Task OnInitializedAsync() => Challenges = await ChallengeService.GetAllChallengesAsync();
+    private Dictionary<Guid, bool> JoinedChallenges { get; set; } = new Dictionary<Guid, bool>();
+
+    protected async override Task OnInitializedAsync() 
+    {
+        Challenges = await ChallengeService.GetAllChallengesAsync();
+        foreach (var challenge in Challenges)
+        {
+            JoinedChallenges.Add(challenge.Id, await ChallengeService.IsUserInChallenge(challenge));
+        }
+    }
+
+    private async Task JoinChallenge(Guid id)
+    {
+        await ChallengeService.JoinChallengeAsync(id);
+    }
 }
