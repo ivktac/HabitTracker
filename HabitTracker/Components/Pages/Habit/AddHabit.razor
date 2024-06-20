@@ -27,14 +27,14 @@
 }
 else
 {
-    <div class="container mt-5 d-flex flex-column align-items-center justify-content-center container w-50">
+    <div class="container mt-5 d-flex flex-column align-items-center justify-content-center">
         <h3 class="mx-5 px-5">@title</h3>
 
         <EditForm Model="@Input" FormName="newHabit" OnValidSubmit="OnValidSubmitAsync" class="m-5 justify-content-center">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
 
-            <div class="row d-flex justify-content-center">
+            <div class="row d-flex flex-column align-items-center justify-content-center container">
                 <div class="mb-3">
                     <label for="title" class="form-label">Назва звички:</label>
                     <InputText id="title" class="form-control" @bind-Value="Input.Title" />
@@ -51,10 +51,10 @@ else
                 <div class="mb-3">
                     <label for="color" class="form-label">Колір:</label>
                     <div class="d-flex m-2 justify-content-between align-items-center">
-                        <div class="btn-group" role="group" aria-label="Days of week">
+                        <div class="btn-group colors-group" role="group" aria-label="Days of week">
                             @foreach (var color in Colors)
                             {
-                                <div class="m-2">
+                                <div class="m-2 color-box">
                                     <input type="checkbox" checked="@Input.ColorId == color.Id.ToString()" class="btn-check color-input" id="@color.Id" autocomplete="off" @onchange="_ => Input.ColorId = color.Id.ToString()" />
                                     <label class="rounded-3 btn m-1 color-label" for="@color.Id" style="background-color: @color.Code; width: 50%; height: 100%;">
                                     </label>
@@ -92,6 +92,13 @@ else
 <style>
     .color-input:not(:checked) + .color-label {
         border: 2px solid #000;
+    }
+
+    .colors-group {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(100px, 1fr));
+        grid-template-rows: repeat(2, 50px);
+        gap: 10px;
     }
 </style>
 
