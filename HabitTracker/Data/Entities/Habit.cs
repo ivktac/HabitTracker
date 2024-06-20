@@ -22,6 +22,9 @@ public class Habit
 
     public bool IsCompleted { get; set; }
 
+    public Guid CategoryId { get; set; }
+    public Category Category { get; set; } = null!;
+
     public string UserId { get; set; } = string.Empty;
     public ApplicationUser User { get; set; } = null!;
 
@@ -35,8 +38,22 @@ public class Habit
     [NotMapped]
     public HabitRecord TodayRecord => GetRecord(DateTime.Now);
 
-    public HabitRecord GetRecord(DateTime date) => Records.FirstOrDefault(r => r.Date.Date == date.Date) ?? new HabitRecord();
+    public HabitRecord GetRecord(DateTime date)
+    {
+        var isPeristence = StartDate <= date && (EndDate == null || EndDate >= date);
+        if (!isPeristence)
+        {
+            return new HabitRecord();
+        }
+
+        var record = Records.FirstOrDefault(r => r.Date.Date == date.Date);
+        return record ?? new HabitRecord();
+    }
 
     [NotMapped]
     public string HexCode => Color.Code;
+
+    [NotMapped]
+    public string CategoryName => Category?.Name ?? string.Empty;
+
 }

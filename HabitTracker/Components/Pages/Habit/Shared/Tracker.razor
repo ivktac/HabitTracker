@@ -95,6 +95,8 @@
 
     private void UpdateTodayHabits()
     {
-        TodayHabits = Habits.Where(h => h.Frequencies.Any(f => f.DayOfWeek == CurrentDate.DayOfWeek)).ToList();
+        TodayHabits = Habits
+            .Where(h => h.StartDate <= CurrentDate && (h.EndDate == null || h.EndDate >= CurrentDate))
+            .Where(h => h.Frequencies.Any(f => f.DayOfWeek == CurrentDate.DayOfWeek)).ToList();
     }
 }

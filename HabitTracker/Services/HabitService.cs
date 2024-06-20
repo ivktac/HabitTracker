@@ -3,7 +3,6 @@ using HabitTracker.Data.Entities;
 using HabitTracker.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace HabitTracker.Services;
 
@@ -76,6 +75,7 @@ public class HabitService : BaseService, IHabitService
         return await _context.Habits
             .Include(h => h.Frequencies)
             .Where(h => h.UserId == userId)
+            .Where(h => h.StartDate <= DateTime.Now && (h.EndDate == null || h.EndDate >= DateTime.Now))
             .Where(h => h.Frequencies.Any(f => f.DayOfWeek == dayOfWeek))
             .ToListAsync();
     }
