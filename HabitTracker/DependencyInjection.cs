@@ -97,6 +97,7 @@ public static class DependencyInjection
         services.AddScoped<IHabitStatusService, HabitStatusService>();
         services.AddScoped<IColorService, ColorService>();
         services.AddScoped<IRecordService, RecordService>();
+        services.AddScoped<IChallengeService, ChallengeService>();
 
         return services;
     }
