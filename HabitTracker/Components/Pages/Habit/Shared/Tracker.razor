@@ -1,5 +1,6 @@
 ﻿@inject IHabitService HabitService
 @inject IHabitStatusService HabitStatusService
+@inject IRecordService RecordService
 
 <div class="container">
     <AuthorizeView>
@@ -24,7 +25,7 @@
                     <button class="btn btn-primary" @onclick="SetToday">Сьогодні</button>
                     <button class="btn btn-secondary" @onclick="NextDay" disabled="@IsEnabledButton">→</button>
                 </div>
-                <TodayHabits Habits="@TodayHabits" CurrentDate="@CurrentDate" OnHabitUpdated="@OnHabitUpdated" />
+                <TodayHabits Streaks="@Streaks" Habits="@TodayHabits" CurrentDate="@CurrentDate" OnHabitUpdated="@OnHabitUpdated" />
             </div>
         </div>
     </div>
@@ -47,6 +48,8 @@
 
     private bool IsEnabledButton => DateTime.Now.Date <= CurrentDate.Date;
 
+    private Dictionary<Guid, int> Streaks { get; set; } = new Dictionary<Guid, int>();
+
     protected async override Task OnInitializedAsync()
     {
         Habits = await HabitService.GetHabitsAsync();
@@ -62,6 +65,12 @@
         };
 
         ProgressValue = await HabitStatusService.CalculateProgressThisWeek();
+
+        foreach (var habit in TodayHabits)
+        {
+            var streak = await RecordService.GetHabitStreak(habit.Id);
+            Streaks[habit.Id] = streak;
+        }
     }
 
     private void OnHabitUpdated()
