@@ -88,10 +88,6 @@ public class HabitService : BaseService, IHabitService
         var userId = await GetCurrentUserIdAsync();
         habit.UserId = userId;
 
-        if (!habit.IsCompleted)
-        {
-            habit.EndDate = DateTime.Now;
-        }
 
         if (dayOfWeeks is not null)
         {

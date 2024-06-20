@@ -106,26 +106,20 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
         }
 
         var records = await context.Records
-            .Where(r => r.HabitId == habitId && r.IsDone)
+            .Where(r => r.HabitId == habitId)
             .OrderByDescending(r => r.Date)
             .ToListAsync();
 
-        if (records.Count == 0)
-        {
-            return 0;
-        }
-
-        int streak = 0;
-        DateTime currentDate = DateTime.Now.Date;
+        var streak = 0;
+        var current = DateTime.Now;
 
         foreach (var record in records)
         {
-            if (record.Date == currentDate)
+            if (record.IsDone)
             {
                 streak++;
-                currentDate = currentDate.AddDays(-1);
             }
-            else
+            else if (record.Date <= current.Date)
             {
                 break;
             }
