@@ -29,8 +29,11 @@ public class HabitStatusService : BaseService, IHabitStatusService
 
         foreach (var habit in habits)
         {
+            var startDate = habit.StartDate;
+            var habitStartOfWeek = startOfWeek < startDate ? startDate : startOfWeek;
+
             var featureRecords = await _context.Frequencies
-                .Where(f => f.HabitId == habit.Id)
+                .Where(f => f.HabitId == habit.Id && f.DayOfWeek >= habitStartOfWeek.DayOfWeek)
                 .Select(f => f.DayOfWeek)
                 .ToListAsync();
 
