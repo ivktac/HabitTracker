@@ -110,20 +110,20 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
             .OrderByDescending(r => r.Date)
             .ToListAsync();
 
+        if (records.Count == 0)
+        {
+            return 0;
+        }
+
         int streak = 0;
-        DateTime? previousDate = null;
+        DateTime currentDate = DateTime.Now.Date;
 
         foreach (var record in records)
         {
-            if (previousDate == null)
-            {
-                previousDate = record.Date;
-            }
-
-            if (record.Date == previousDate)
+            if (record.Date == currentDate)
             {
                 streak++;
-                previousDate = previousDate.Value.AddDays(-1);
+                currentDate = currentDate.AddDays(-1);
             }
             else
             {
