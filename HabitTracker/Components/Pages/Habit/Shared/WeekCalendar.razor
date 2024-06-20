@@ -31,8 +31,8 @@ else
                     @foreach (var day in DaysOfWeek)
                     {
                         <td>
-                            @if (habit.Frequencies.Any(f => f.DayOfWeek == day) && 
-                                habit.Records.Any(f => f.Date.DayOfWeek == day && f.Date.Date >= CurrentWeekDates.First() && f.Date.Date <= CurrentWeekDates.Last()))
+                            @if (day >= habit.StartDate.DayOfWeek && habit.Frequencies.Any(f => f.DayOfWeek == day) &&
+                           habit.Records.Any(f => f.Date.DayOfWeek == day && f.Date.Date >= CurrentWeekDates.First() && f.Date.Date <= CurrentWeekDates.Last()))
                             {
                                 <input type="checkbox" checked="@GetChecked(habit, day)" disabled
                                         class="form-check-input mt-0"

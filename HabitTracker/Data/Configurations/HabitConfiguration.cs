@@ -17,6 +17,13 @@ public class HabitConfiguration : IEntityTypeConfiguration<Habit>
             .WithMany(c => c.Habits)
             .HasForeignKey(h => h.ColorId);
 
+        builder.HasOne(h => h.Category)
+            .WithMany(c => c.Habits)
+            .HasForeignKey(h => h.CategoryId);
+
+        builder.Property(h => h.CategoryId)
+            .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000001"));
+
         builder.HasMany(h => h.Frequencies)
             .WithOne(f => f.Habit)
             .HasForeignKey(f => f.HabitId);

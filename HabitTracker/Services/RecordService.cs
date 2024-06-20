@@ -66,6 +66,11 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
             throw new Exception("Habit not found");
         }
 
+        if (habit.StartDate > current || (habit.EndDate is not null && habit.EndDate < current))
+        {
+            return;
+        }
+
         var record = await context.Records
             .FirstOrDefaultAsync(r => r.HabitId == habitId && r.Date == current.Date);
 

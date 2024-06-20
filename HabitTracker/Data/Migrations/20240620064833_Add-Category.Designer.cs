@@ -4,6 +4,7 @@ using HabitTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HabitTracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240620064833_Add-Category")]
+    partial class AddCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,44 +105,7 @@ namespace HabitTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("7266b6d5-f2e2-4740-853a-5258815f0469"),
-                            Name = "Health"
-                        },
-                        new
-                        {
-                            Id = new Guid("95e83df2-4417-45f3-a571-b8f6f51df696"),
-                            Name = "Fitness"
-                        },
-                        new
-                        {
-                            Id = new Guid("50664098-9915-48a2-84b2-b2ff12b38ecc"),
-                            Name = "Hobbies"
-                        },
-                        new
-                        {
-                            Id = new Guid("feaf231d-361d-4387-a2d1-aae98ff0310e"),
-                            Name = "Work"
-                        },
-                        new
-                        {
-                            Id = new Guid("72104c51-a62a-4923-b1bf-43633f53a469"),
-                            Name = "Study"
-                        },
-                        new
-                        {
-                            Id = new Guid("167bfeed-a7e6-4939-b352-5f78d33b0ba6"),
-                            Name = "Personal"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                            Name = "Default"
-                        });
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("HabitTracker.Data.Entities.Color", b =>
@@ -163,85 +129,85 @@ namespace HabitTracker.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d65394a4-3050-4b90-80c6-1f11112066b2"),
+                            Id = new Guid("4bf62de8-4877-4e92-b89d-d37c0216d888"),
                             Code = "#dc8a78",
                             Name = "Rosewater"
                         },
                         new
                         {
-                            Id = new Guid("a700b3bf-206f-40ae-993a-e8c8892c2134"),
+                            Id = new Guid("fed9b0a5-a3c4-4f9b-af80-e63f19312137"),
                             Code = "#dd7878",
                             Name = "Flamingo"
                         },
                         new
                         {
-                            Id = new Guid("6920557a-4bfe-4c13-a906-1f42a5b1edb1"),
+                            Id = new Guid("c3c36f3c-231a-46db-b7ef-e218d77b2517"),
                             Code = "#ea76cb",
                             Name = "Pink"
                         },
                         new
                         {
-                            Id = new Guid("b4a0a59b-0f6e-446e-97f3-71578f5aced8"),
+                            Id = new Guid("f7eee32d-bdd5-4ed7-b644-2ca1bcbb2132"),
                             Code = "#8839ef",
                             Name = "Mauve"
                         },
                         new
                         {
-                            Id = new Guid("4f69b271-8936-44e8-8c09-6cb899ee7614"),
+                            Id = new Guid("b44b5676-d730-4b2f-b7e2-b9289c52675a"),
                             Code = "#d20f39",
                             Name = "Red"
                         },
                         new
                         {
-                            Id = new Guid("7e93cc24-73f6-4242-ace0-976f61d5be7d"),
+                            Id = new Guid("78c8f6e6-c88a-42ec-aa7f-f34ea8a1adbd"),
                             Code = "#e64553",
                             Name = "Maroon"
                         },
                         new
                         {
-                            Id = new Guid("31da8b7f-6463-460f-882e-717254cd3d52"),
+                            Id = new Guid("124522f2-5c53-4102-8f72-d88a0b680da2"),
                             Code = "#fe640b",
                             Name = "Peach"
                         },
                         new
                         {
-                            Id = new Guid("67317c0f-c68f-4d1b-8e11-3f5949e2dbe6"),
+                            Id = new Guid("d33ca0b0-5006-45b6-937c-c7afc7c3e48f"),
                             Code = "#df8e1d",
                             Name = "Yellow"
                         },
                         new
                         {
-                            Id = new Guid("e65ebc13-4bd3-46d5-b144-5b008a7be9ef"),
+                            Id = new Guid("bc262fca-a6e7-41dc-9a15-b6dc6a967c8e"),
                             Code = "#40a02b",
                             Name = "Green"
                         },
                         new
                         {
-                            Id = new Guid("2bada125-05ff-4e43-953b-98a165806ad6"),
+                            Id = new Guid("5e73fc93-dc6b-44b5-b0fd-dff58d9cb88e"),
                             Code = "#179299",
                             Name = "Teal"
                         },
                         new
                         {
-                            Id = new Guid("9c3ca1ad-8c32-44d2-925b-84e1ed23605f"),
+                            Id = new Guid("676df037-9223-4d5e-a9df-1a1dcc582c5a"),
                             Code = "#04a5e5",
                             Name = "Sky"
                         },
                         new
                         {
-                            Id = new Guid("1dc8e546-70db-4d6c-8d16-cc957a11bcb8"),
+                            Id = new Guid("4d980514-3efd-419e-994a-15789dac0227"),
                             Code = "#209fb5",
                             Name = "Sapphire"
                         },
                         new
                         {
-                            Id = new Guid("93f0b1a3-185b-43be-8f11-745f65fc3d97"),
+                            Id = new Guid("84b013d8-50be-4822-aa2a-c5091a2728cb"),
                             Code = "#1e66f5",
                             Name = "Blue"
                         },
                         new
                         {
-                            Id = new Guid("0d734b69-0942-4cc7-95ff-dc89472f420f"),
+                            Id = new Guid("54de3a1b-d981-4777-b82c-71a21ea21277"),
                             Code = "#7287fd",
                             Name = "Lavender"
                         });
@@ -254,9 +220,7 @@ namespace HabitTracker.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000001"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ColorId")
                         .HasColumnType("uniqueidentifier");
