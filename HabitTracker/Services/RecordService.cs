@@ -119,7 +119,7 @@ public class RecordService(ApplicationDbContext context, AuthenticationStateProv
             {
                 streak++;
             }
-            else if (record.Date <= current.Date)
+            else if (record.Date < current.Date)
             {
                 break;
             }
